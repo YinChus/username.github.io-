@@ -344,7 +344,7 @@
     .overlay{position:absolute;inset:0;background:rgba(30,50,100,.25);z-index:25;display:none;backdrop-filter:blur(2px)}
     .overlay.show{display:block}
     .drawer{
-      position:absolute;top:var(--status-h);bottom:0;left:0;right:auto;
+      position:absolute;top:var(--status-h);bottom:var(--nav-h);left:0;right:auto;
       width:86%;max-width:340px;
       background:var(--surface);
       border-radius:0 18px 18px 0;
@@ -360,13 +360,6 @@
       border-bottom:1px solid var(--line);flex-shrink:0;
     }
     .drawer-header strong{text-align:center;font-size:15px;color:var(--text)}
-    .history-search{
-      display:flex;align-items:center;gap:8px;
-      background:var(--bg);border:1px solid var(--line);border-radius:11px;
-      padding:0 11px;height:34px;margin:9px 14px;flex-shrink:0;
-    }
-    .history-search input{flex:1;border:0;outline:0;background:transparent;font-size:12px;color:var(--text)}
-    .history-search input::placeholder{color:var(--muted)}
     .history-list{flex:1;overflow-y:auto;padding:2px 14px 8px;scrollbar-width:none}
     .history-list::-webkit-scrollbar{display:none}
     .history-group-label{font-size:9.5px;font-weight:700;color:var(--muted);padding:9px 0 4px;text-transform:uppercase;letter-spacing:.4px}
@@ -396,7 +389,16 @@
     }
     .group-body{overflow:hidden;transition:max-height .25s ease}
     .group-head.collapsed + .group-body{max-height:0!important}
+    .group-search{
+      display:flex;align-items:center;gap:7px;
+      background:var(--bg);border:1px solid var(--line);border-radius:10px;
+      padding:0 10px;height:32px;margin:4px 0 6px;
+    }
+    .group-search input{flex:1;border:0;outline:0;background:transparent;font-size:12px;color:var(--text)}
+    .group-search input::placeholder{color:var(--muted)}
+    .group-search svg{flex-shrink:0}
     .task-empty-row{font-size:11px;color:var(--muted);padding:8px 0 4px}
+    .search-empty{font-size:11px;color:var(--muted);padding:14px 2px;text-align:center}
     /* 抽屉头部新建会话按钮 */
     .drawer-new{
       width:34px;height:34px;border-radius:50%;
@@ -426,15 +428,16 @@
     .mgmt-check.checked{background:var(--green);border-color:var(--green)}
     .mgmt-check.checked svg{display:block;width:11px;height:11px;stroke:#fff;stroke-width:2.5}
     .mgmt-actions{display:none;padding:8px 14px;border-top:1px solid var(--line);background:var(--surface);gap:8px}
-    .manage-mode .mgmt-actions{display:flex}
+    .manage-mode .mgmt-actions{display:flex;position:absolute;bottom:0;left:0;right:0;z-index:10}
+    .manage-mode .history-list{padding-bottom:64px}
     .mgmt-act-btn{flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:12px;font-weight:700;background:var(--bg);color:var(--red);border:1px solid var(--line)}
     .mgmt-act-btn:active{background:var(--red-l)}
     .mgmt-act-btn.green{color:var(--green);border-color:rgba(29,185,106,.3);background:var(--green-l)}
     .mgmt-act-btn.green:active{background:rgba(29,185,106,.25)}
     /* 单条操作弹出菜单 */
-    .item-actions-overlay{display:none;position:absolute;inset:0;z-index:80}
+    .item-actions-overlay{display:none;position:absolute;inset:0;z-index:80;background:rgba(0,0,0,.35);backdrop-filter:blur(2px)}
     .item-actions-overlay.show{display:block}
-    .item-action-sheet{position:absolute;left:0;right:0;bottom:0;z-index:81;background:var(--surface);border-radius:18px 18px 0 0;padding:0;transform:translateY(100%);transition:transform .22s ease;box-shadow:0 -8px 32px rgba(30,50,100,.2)}
+    .item-action-sheet{position:absolute;left:0;right:0;bottom:0;z-index:81;background:var(--surface);border-radius:18px 18px 0 0;padding:0 0 12px;transform:translateY(100%);transition:transform .22s ease;box-shadow:0 -8px 32px rgba(30,50,100,.2)}
     .item-action-sheet.open{transform:translateY(0)}
     .ias-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px}
     .ias-header strong{font-size:13px;color:var(--text2)}
@@ -447,6 +450,14 @@
     .ias-item.danger{color:var(--red)}
     .ias-cancel{text-align:center;padding:14px;font-size:13px;font-weight:600;color:var(--text2);border-top:6px solid var(--bg);width:100%}
     .ias-cancel:active{background:var(--bg)}
+    .ias-rename{display:none;padding:14px 20px 8px;background:var(--surface);border-radius:0 0 18px 18px}
+    .ias-rename.show{display:block}
+    .hidden{display:none!important}
+    .ias-rename input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font-size:13px;outline:0}
+    .ias-rename input:focus{border-color:var(--green)}
+    .ias-rename-btns{display:flex;gap:8px;margin-top:10px}
+    .ias-rename-btns button{flex:1;padding:9px 0;border-radius:9px;font-size:13px;font-weight:600;border:1px solid var(--line);background:var(--bg);color:var(--text)}
+    .ias-rename-btns button:last-child{background:var(--green);color:#fff;border-color:var(--green)}
     /* 新增：加载动画 */
     .typing {
       display: flex;
@@ -519,26 +530,32 @@
     .sheet-body{padding:10px 16px 16px;overflow-y:auto;scrollbar-width:none}
     .sheet-body::-webkit-scrollbar{display:none}
     /* 模型选择列表 */
-    .model-list{display:flex;flex-direction:column}
+    .model-search{position:relative;margin-bottom:8px}
+    .model-search input{
+      width:100%;height:36px;padding:0 32px 0 12px;border-radius:10px;
+      border:1.5px solid var(--line);background:var(--bg);color:var(--text);
+      font-size:13px;outline:0;
+    }
+    .model-search input:focus{border-color:var(--green)}
+    .model-search svg{
+      position:absolute;right:10px;top:50%;transform:translateY(-50%);
+      color:var(--muted);pointer-events:none;
+    }
+    .model-list{display:flex;flex-direction:column;gap:2px}
     .model-row{
-      display:flex;align-items:center;gap:10px;
-      padding:9px 2px;border-bottom:1px solid var(--line2);
-      cursor:pointer;
+      display:flex;align-items:flex-start;padding:10px 12px;border-radius:10px;
+      cursor:pointer;gap:10px;transition:background .15s;
     }
-    .model-row:last-child{border-bottom:0}
-    .model-row .m-logo{
-      width:26px;height:26px;border-radius:8px;flex-shrink:0;
-      display:grid;place-items:center;font-size:12px;font-weight:800;color:#fff;
+    .model-row:active{background:var(--line2)}
+    .model-row.selected{background:var(--green-l)}
+    .model-row .mi{
+      width:18px;height:18px;margin-top:1px;flex-shrink:0;
+      color:var(--muted);
     }
-    .model-row .m-logo svg{width:15px;height:15px;display:block}
-    .model-row .m-main{flex:1;min-width:0;display:flex;align-items:center;gap:5px;flex-wrap:wrap}
-    .model-row .m-name{font-size:12px;font-weight:700;color:var(--text)}
-    .model-row.selected .m-name{color:var(--green)}
-    .m-tag{font-size:9px;font-weight:600;color:var(--blue);padding:1px 4px;border-radius:4px;background:var(--blue-l)}
-    .m-tag.vision{color:var(--purple);background:var(--purple-l)}
-    .m-badge{font-size:9px;font-weight:700;color:#fff;background:var(--red,#f5495b);padding:1px 5px;border-radius:4px}
-    .m-credits{font-size:10px;color:var(--muted);flex-shrink:0;margin-left:auto}
-    .m-check{width:16px;flex-shrink:0;color:var(--green);font-size:13px;text-align:center}
+    .model-row .name{font-size:13px;font-weight:600;color:var(--text);line-height:1.35}
+    .model-row .desc{font-size:11.5px;color:var(--muted);line-height:1.4;margin-top:2px}
+    .model-row.selected .name{color:var(--green)}
+    .model-row.selected .desc{color:var(--green);opacity:.75}
     .field{margin-bottom:14px}
     .field label{display:block;font-size:11.5px;font-weight:700;color:var(--text2);margin-bottom:6px}
     .field input,.field select,.field textarea{
@@ -600,20 +617,24 @@
       display:grid;place-items:center;cursor:pointer;
     }
     .attach-btn svg{width:17px;height:17px;stroke:var(--text2);display:block}
-    /* 输入框内的定时任务标签 */
-    .task-tag{
-      display:none;align-items:center;gap:4px;height:24px;
+    /* 输入框内的定时任务标签 / 技能标签 */
+    .task-tag,.skill-tag{
+      display:inline-flex;align-items:center;gap:4px;height:24px;
       padding:0 4px 0 9px;border-radius:999px;margin-bottom:9px;
       background:var(--green-l);border:1px solid rgba(29,185,106,.32);
       font-size:10.5px;font-weight:600;color:var(--green);width:max-content;
     }
+    .task-tag{display:none}
     .task-tag.show{display:inline-flex}
-    .task-tag svg{width:13px;height:13px;stroke:var(--green);display:block;flex-shrink:0}
-    .task-tag .tt-close{
+    .skill-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:3px}
+    .skill-tags:empty{display:none}
+    .task-tag svg,.skill-tag svg{width:13px;height:13px;stroke:var(--green);display:block;flex-shrink:0}
+    .task-tag .tt-close,.skill-tag .st-close{
       width:16px;height:16px;border-radius:50%;display:grid;place-items:center;
       cursor:pointer;flex-shrink:0;
     }
-    .task-tag .tt-close svg{width:11px;height:11px;stroke:var(--green)}
+    .task-tag .tt-close svg,.skill-tag .st-close svg{width:11px;height:11px;stroke:var(--green)}
+    .skill-tag span{max-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     /* + 附加菜单 sheet */
     .attach-quick{display:flex;gap:9px;padding:4px 16px 12px}
     .aq-item{
@@ -932,12 +953,13 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
           </button>
         </div>
+        <div class="skill-tags" id="homeSkillTags"></div>
         <textarea id="homeInput" placeholder="在此输入您想了解的内容，例如：分析齿轮图纸的尺寸公差、生成叶轮仿真报告等"></textarea>
         <div class="ask-tools">
           <button class="attach-btn" id="homeAttachBtn" title="添加">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
           </button>
-          <button class="model-name-chip" id="homeModelBtn" title="切换模型">doubao-seed-2-0-code</button>
+          <button class="model-name-chip" id="homeModelBtn" title="切换模型">Auto</button>
           <button class="send-btn" id="homeSend">↑</button>
         </div>
       </div>
@@ -975,12 +997,13 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
         </button>
       </div>
+      <div class="skill-tags" id="chatSkillTags"></div>
       <textarea id="chatInput" placeholder="继续提问或上传文件..."></textarea>
       <div class="chat-input-tools">
         <button class="attach-btn" id="chatAttachBtn" title="添加">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
         </button>
-        <button class="model-name-chip" id="chatModelBtn" title="切换模型">doubao-seed-2-0-code</button>
+        <button class="model-name-chip" id="chatModelBtn" title="切换模型">Auto</button>
         <button class="chat-send" id="chatSend">↑</button>
       </div>
     </div>
@@ -1113,18 +1136,10 @@
     <div class="drawer-header">
       <button class="icon-btn" id="closeHistory">‹</button>
       <strong>会话与任务</strong>
-      <button class="drawer-new" id="drawerNewChat" title="新建会话">＋</button>
     </div>
     <div class="mgmt-actions" id="mgmtActions">
       <button class="mgmt-act-btn green" id="mgmtPinBtn">置顶</button>
       <button class="mgmt-act-btn" id="mgmtDelBtn">删除</button>
-    </div>
-    <div class="history-search">
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round">
-        <circle cx="7" cy="7" r="4.5"/>
-        <line x1="10.5" y1="10.5" x2="13.5" y2="13.5"/>
-      </svg>
-      <input type="text" id="historySearchInput" placeholder="搜索会话（图纸/仿真/表格等）..." />
     </div>
     <div class="history-list" id="historyList">
       <div class="group-head collapsed" id="taskGroupHead">
@@ -1143,6 +1158,13 @@
         <button class="gh-more" id="chatMoreBtn" title="管理">⋯</button>
       </div>
       <div class="group-body" id="chatGroupBody">
+      <div class="group-search">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round">
+          <circle cx="7" cy="7" r="4.5"/>
+          <line x1="10.5" y1="10.5" x2="13.5" y2="13.5"/>
+        </svg>
+        <input type="text" id="historySearchInput" placeholder="搜索会话（图纸/仿真/表格等）..." />
+      </div>
       <div class="history-group-label">今天</div>
       <div class="history-item" data-title="齿轮图纸参数识别" data-msg="继续分析齿轮的加工公差和材料要求"><div class="h-info"><strong>齿轮图纸参数识别</strong><span>识别模数、齿数、齿顶圆直径等关键尺寸，分析加工风险...</span></div><button class="h-dots">⋯</button></div>
       <div class="history-item" data-title="Excel 传感器数据清洗" data-msg="批量处理异常值并生成趋势图表"><div class="h-info"><strong>Excel 传感器数据清洗</strong><span>批量处理产线传感器采样数据，剔除异常值...</span></div><button class="h-dots">⋯</button></div>
@@ -1162,14 +1184,30 @@
   <div class="sheet-overlay" id="modelSheetOverlay"></div>
   <aside class="sheet" id="modelSheet">
     <div class="sheet-grip"></div>
-    <div class="sheet-head">
-      <strong>选择模型 <span class="sheet-head-sub" id="modelCount">8 个可用</span></strong>
-      <button class="sheet-close" id="modelSheetClose" aria-label="关闭">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
+    <div class="sheet-head" style="justify-content:center;padding-bottom:10px;border-bottom:0">
+      <strong>选择模型</strong>
     </div>
     <div class="sheet-body">
+      <div class="model-search">
+        <input type="text" id="modelSearchInput" placeholder="搜索模型" autocomplete="off">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </div>
       <div class="model-list" id="modelList"></div>
+    </div>
+  </aside>
+  <!-- ═══ 技能选择 BOTTOM SHEET ═══ -->
+  <div class="sheet-overlay" id="skillSheetOverlay"></div>
+  <aside class="sheet" id="skillSheet">
+    <div class="sheet-grip"></div>
+    <div class="sheet-head" style="justify-content:center;padding-bottom:10px;border-bottom:0">
+      <strong>选择技能</strong>
+    </div>
+    <div class="sheet-body">
+      <div class="model-search">
+        <input type="text" id="skillSearchInput" placeholder="搜索技能" autocomplete="off">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+      </div>
+      <div class="model-list" id="skillList"></div>
     </div>
   </aside>
   <!-- ═══ 添加(+) BOTTOM SHEET ═══ -->
@@ -1193,6 +1231,10 @@
     <div class="sheet-body">
       <div class="attach-list">
 
+        <button class="al-item" id="attachSkillItem">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+          <span>技能</span>
+        </button>
         <button class="al-item" id="attachTaskItem">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
           <span>定时任务</span>
@@ -1376,7 +1418,7 @@
         <div class="agent-tag"><div class="agent-tag-icon">◈</div>${title}</div>
       </div>
       ${buildStepCard(title, welcomeMsg)}
-      <div class="msg-time">▣ 05-26 16:02</div>
+      <div class="msg-time">▣ ${formatTime()}</div>
     `;
   }
   function openChat(title, msg) {
@@ -1402,8 +1444,8 @@
     const msg = input.value.trim();
     if (!msg) return;
     const chatBody = $('chatBody');
-    // 添加用户消息
     const chatTitle2 = $('chatTitle').textContent;
+    // 添加用户消息
     chatBody.innerHTML += `
       <div class="user-label">
         <div class="agent-tag"><div class="agent-tag-icon">◈</div>${chatTitle2}</div>
@@ -1494,6 +1536,7 @@
 2. 相关参数或图纸/模型信息；
 3. 期望的输出形式（报告/表格/模型等）。`;
       }
+      const aiTime = formatTime();
       // 添加AI回复
       chatBody.innerHTML += `
         ${buildStepCard($('chatTitle').textContent, aiReply.replace(/\n/g, '<br>'))}
@@ -1504,11 +1547,19 @@
             设为定时任务
           </button>
         </div>`}
-        <div class="msg-time">▣ 05-19 16:06</div>
+        <div class="msg-time">▣ ${aiTime}</div>
       `;
       // 滚动到底部
       chatBody.scrollTop = chatBody.scrollHeight;
     }, 2000);
+  }
+  function formatTime() {
+    const now = new Date();
+    const m = String(now.getMonth() + 1).padStart(2, '0');
+    const d = String(now.getDate()).padStart(2, '0');
+    const h = String(now.getHours()).padStart(2, '0');
+    const min = String(now.getMinutes()).padStart(2, '0');
+    return `${m}-${d} ${h}:${min}`;
   }
   // ═══ 历史会话管理 ═══
   let manageMode = false;
@@ -1523,7 +1574,6 @@
     manageMode = !manageMode;
     const drawer = $('historyDrawer');
     drawer.classList.toggle('manage-mode', manageMode);
-    $('drawerNewChat').style.display = manageMode ? 'none' : '';
     // 在关闭按钮位置旁边显示"完成"
     if (manageMode) {
       $('closeHistory').style.display = 'none';
@@ -1553,8 +1603,8 @@
       const badge = document.createElement('span');
       badge.className = 'h-pin-badge';
       badge.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V2h8v4M6 4h4M8 2v12"/></svg>';
-      const avatar = item.querySelector('.h-avatar');
-      if (avatar) avatar.parentNode.insertBefore(badge, avatar);
+      const hInfo = item.querySelector('.h-info');
+      if (hInfo) item.insertBefore(badge, hInfo);
     }
     const chk = document.createElement('span');
     chk.className = 'mgmt-check';
@@ -1587,8 +1637,8 @@
       const badge = document.createElement('span');
       badge.className = 'h-pin-badge';
       badge.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V2h8v4M6 4h4M8 2v12"/></svg>';
-      const avatar = item.querySelector('.h-avatar');
-      if (avatar) avatar.parentNode.insertBefore(badge, avatar);
+      const hInfo = item.querySelector('.h-info');
+      if (hInfo) item.insertBefore(badge, hInfo);
     }
   });
 
@@ -1605,14 +1655,20 @@
       overlay.innerHTML = `
         <div class="item-action-sheet" id="itemActionSheet">
           <div class="ias-header">
-            <strong>${item.querySelector('.h-info strong')?.textContent || '操作'}</strong>
+            <strong id="iasTitle">${item.querySelector('.h-info strong')?.textContent || '操作'}</strong>
             <button class="ias-done" id="iasDone">完成</button>
           </div>
-          <div class="ias-items">
-          <button class="ias-item" data-act="pin">置顶</button>
-          <button class="ias-item" data-act="rename">重命名</button>
-          <button class="ias-item" data-act="export">导出</button>
-          <button class="ias-item danger" data-act="delete">删除</button>
+          <div class="ias-items" id="iasItems">
+            <button class="ias-item" data-act="pin">置顶</button>
+            <button class="ias-item" data-act="rename">重命名</button>
+            <button class="ias-item danger" data-act="delete">删除</button>
+          </div>
+          <div class="ias-rename" id="iasRename">
+            <input type="text" id="iasRenameInput" placeholder="输入新名称" />
+            <div class="ias-rename-btns">
+              <button id="iasRenameCancel">取消</button>
+              <button id="iasRenameConfirm">确定</button>
+            </div>
           </div>
           <button class="ias-cancel" id="iasCancel">取消</button>
         </div>
@@ -1620,23 +1676,63 @@
       overlay.addEventListener('click', e => {
         if (e.target === overlay || e.target.closest('.ias-cancel') || e.target.closest('.ias-done')) closeActionSheet();
       });
+      // 操作按钮点击
       overlay.querySelector('.item-action-sheet').addEventListener('click', e => {
         const act = e.target.closest('.ias-item')?.dataset.act;
-        if (act) { handleAction(act); closeActionSheet(); }
+        if (!act) return;
+        if (act === 'rename') {
+          showRenameMode();
+          return;
+        }
+        handleAction(act);
+        closeActionSheet();
       });
-      $('historyDrawer').appendChild(overlay);
+      // 重命名取消
+      overlay.querySelector('#iasRenameCancel').addEventListener('click', () => hideRenameMode());
+      // 重命名确认
+      overlay.querySelector('#iasRenameConfirm').addEventListener('click', () => confirmRename());
+      document.querySelector('.phone').appendChild(overlay);
     } else {
       const overlay = document.getElementById('itemActionOverlay');
       overlay.querySelector('.ias-header strong').textContent = item.querySelector('.h-info strong')?.textContent || '操作';
+      hideRenameMode();
+      // 确保 overlay 挂载在 phone 容器上，避免被底部导航遮挡
+      if (overlay.parentElement !== document.querySelector('.phone')) {
+        document.querySelector('.phone').appendChild(overlay);
+      }
     }
     document.getElementById('itemActionOverlay').classList.add('show');
     setTimeout(() => document.getElementById('itemActionSheet').classList.add('open'), 10);
     actionSheetOpen = true;
   }
 
+  function showRenameMode() {
+    const name = currentActionItem?.querySelector('.h-info strong')?.textContent || '';
+    $('iasItems').classList.add('hidden');
+    $('iasRename').classList.add('show');
+    const input = $('iasRenameInput');
+    input.value = name;
+    input.focus();
+  }
+  function hideRenameMode() {
+    $('iasItems').classList.remove('hidden');
+    $('iasRename').classList.remove('show');
+  }
+  function confirmRename() {
+    const newName = $('iasRenameInput').value.trim();
+    if (newName && currentActionItem) {
+      currentActionItem.querySelector('.h-info strong').textContent = newName;
+      currentActionItem.dataset.title = newName;
+      $('iasTitle').textContent = newName;
+    }
+    hideRenameMode();
+    closeActionSheet();
+  }
+
   function closeActionSheet() {
     const ov = document.getElementById('itemActionOverlay');
     if (ov) { ov.classList.remove('show'); document.getElementById('itemActionSheet').classList.remove('open'); }
+    hideRenameMode();
     actionSheetOpen = false;
     currentActionItem = null;
   }
@@ -1660,11 +1756,7 @@
         }
         break;
       case 'rename':
-        const newName = prompt('重命名会话', name);
-        if (newName && newName.trim()) {
-          currentActionItem.querySelector('.h-info strong').textContent = newName.trim();
-          currentActionItem.dataset.title = newName.trim();
-        }
+        // 重命名由操作面板内的输入框处理（showRenameMode / confirmRename）
         break;
       case 'delete':
         if (confirm(`确定要删除「${name}」吗？`)) {
@@ -1672,9 +1764,6 @@
           currentActionItem.style.opacity = '0';
           setTimeout(() => currentActionItem.remove(), 200);
         }
-        break;
-      case 'export':
-        alert(`已导出会话「${name}」`);
         break;
     }
   }
@@ -1716,7 +1805,8 @@
     if (!manageMode) return;
     const item = e.target.closest('.history-item');
     const chk = e.target.closest('.mgmt-check');
-    if (chk) return; // checkbox 自己处理
+    const dots = e.target.closest('.h-dots');
+    if (chk || dots) return; // checkbox / 三点按钮 各自处理
     if (item) {
       const id = item.dataset.historyId;
       const chkEl = item.querySelector('.mgmt-check');
@@ -1734,6 +1824,7 @@
   function closeAll() {
     $('historyDrawer').classList.remove('open');
     overlay.classList.remove('show');
+    closeActionSheet();
   }
 
   // 非管理模式：长按弹出菜单（touch事件模拟）
@@ -1747,7 +1838,6 @@
   document.querySelector('#historyList').addEventListener('touchmove', () => clearTimeout(longPressTimer));
   // 历史项的三点按钮 → 弹出操作菜单
   document.querySelector('#historyList').addEventListener('click', e => {
-    if (manageMode) return;
     const dots = e.target.closest('.h-dots');
     if (dots) {
       e.stopPropagation();
@@ -1831,14 +1921,41 @@
       }
     })
   );
+  /* ═══ 侧边栏搜索：仅检索历史会话 ═══ */
+  function updateSearchEmptyState(container, count, hasQuery) {
+    let emptyEl = container.querySelector(':scope > .search-empty');
+    if (hasQuery && count === 0) {
+      if (!emptyEl) {
+        emptyEl = document.createElement('div');
+        emptyEl.className = 'search-empty';
+        container.appendChild(emptyEl);
+      }
+      emptyEl.textContent = '未找到匹配项';
+      emptyEl.style.display = '';
+    } else if (emptyEl) {
+      emptyEl.style.display = 'none';
+    }
+  }
   $('historySearchInput').addEventListener('input', e => {
-    const q = e.target.value.toLowerCase();
-    document.querySelectorAll('.history-item').forEach(item => {
-      const title = item.dataset.title?.toLowerCase() || '';
-      const msg = item.querySelector('.h-info span').textContent.toLowerCase() || '';
-      item.style.display = (title.includes(q) || msg.includes(q)) ? '' : 'none';
+    const q = e.target.value.trim().toLowerCase();
+    const chatBody = $('chatGroupBody');
+
+    // 搜索时隐藏日期标签，清空时恢复
+    document.querySelectorAll('.history-group-label').forEach(l => l.style.display = q ? 'none' : '');
+
+    // 仅过滤历史会话（定时任务分组不受影响）
+    let matchCount = 0;
+    chatBody.querySelectorAll(':scope > .history-item').forEach(item => {
+      const title = (item.dataset.title || '').toLowerCase();
+      const msg = (item.dataset.msg || '').toLowerCase();
+      const name = item.querySelector('.h-info strong')?.textContent.toLowerCase() || '';
+      const desc = item.querySelector('.h-info span')?.textContent.toLowerCase() || '';
+      const match = !q || title.includes(q) || msg.includes(q) || name.includes(q) || desc.includes(q);
+      item.style.display = match ? '' : 'none';
+      if (match) matchCount++;
     });
-    document.querySelectorAll('.group-head').forEach(l => l.style.display = q ? 'none' : '');
+
+    updateSearchEmptyState(chatBody, matchCount, q);
   });
   // ═══ 侧边栏多功能区：分组展开/折叠 + 新建入口 ═══
   // 分组标题点击折叠（点击 + 按钮时不折叠）
@@ -1854,7 +1971,6 @@
     closeAll();
     gotoHomeAsNewChat();
   }
-  $('drawerNewChat').addEventListener('click', newChatFromSidebar);
   $('sidebarNewChat').addEventListener('click', newChatFromSidebar);
   // 输入框自动高度调整
   const autoResizeTextarea = (textarea) => {
@@ -2041,6 +2157,7 @@
     attachSheet.classList.add('open');
     attachSheetOverlay.classList.add('show');
     syncAttachTaskActive();
+    syncAttachSkillActive();
   }
   function closeAttachSheet() {
     attachSheet.classList.remove('open');
@@ -2049,6 +2166,11 @@
   $('homeAttachBtn').addEventListener('click', () => openAttachSheet('home'));
   $('chatAttachBtn').addEventListener('click', () => openAttachSheet('chat'));
   attachSheetOverlay.addEventListener('click', closeAttachSheet);
+  // 选择"技能" → 打开技能选择面板
+  $('attachSkillItem').addEventListener('click', () => {
+    closeAttachSheet();
+    openSkillSheet();
+  });
   // 选择"定时任务" → 在对应输入框显示定时任务标签，并把菜单项高亮为绿色
   $('attachTaskItem').addEventListener('click', () => {
     const tag = attachContext === 'chat' ? $('chatTaskTag') : $('homeTaskTag');
@@ -2064,49 +2186,46 @@
     $('chatTaskTag').classList.remove('show');
     $('attachTaskItem').classList.remove('active');
   });
-  // 打开 + 菜单时，根据当前输入框是否已开启定时任务同步绿色高亮状态
+  // 技能标签关闭按钮由 chatSkillTags 容器代理处理
+  // 打开 + 菜单时，根据当前输入框是否已开启定时任务/技能同步绿色高亮状态
   function syncAttachTaskActive() {
     const tag = attachContext === 'chat' ? $('chatTaskTag') : $('homeTaskTag');
     $('attachTaskItem').classList.toggle('active', tag.classList.contains('show'));
   }
-  // 模型名 → 点击弹出底部选择面板
+  function syncAttachSkillActive() {
+    $('attachSkillItem').classList.toggle('active', selectedSkills.length > 0);
+  }
+  // ══════════════════════════════════════════
+  // 模型选择面板（LLM）
+  // ══════════════════════════════════════════
   const MODELS = [
-    { name:'Auto', tags:['推理','视觉'], credits:'x0.40 credits', color:'#1db96a',
-      svg:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linejoin="round" stroke-linecap="round"><path d="M12 3l8 4.2-8 4.2-8-4.2z"/><path d="M4 12l8 4.2 8-4.2"/></svg>' },
-    { name:'Hy3 preview', tags:['推理','视觉'], credits:'x0.04 credits', color:'#4080ff',
-      svg:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6"><circle cx="12" cy="12" r="8.2"/><ellipse cx="12" cy="12" rx="3.4" ry="8.2"/><path d="M3.8 12h16.4"/></svg>' },
-    { name:'GLM-5.1', tags:['推理'], credits:'x1.06 credits', color:'#222',
-      svg:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M13 2.5 6 13.2h4.3L9.4 21.5 18 10.2h-4.6z"/></svg>' },
-    { name:'GLM-5.0', tags:['推理'], credits:'x0.80 credits', color:'#222',
-      svg:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M13 2.5 6 13.2h4.3L9.4 21.5 18 10.2h-4.6z"/></svg>' },
-    { name:'Kimi-K2.5', tags:['推理','视觉'], credits:'x0.45 credits', color:'#1a1a1a',
-      svg:'<svg viewBox="0 0 24 24" fill="#fff"><path d="M12 3c.6 4.2 1.8 5.4 6 6-4.2.6-5.4 1.8-6 6-.6-4.2-1.8-5.4-6-6 4.2-.6 5.4-1.8 6-6z"/></svg>' },
-    { name:'DeepSeek-V3.2', tags:['推理'], credits:'x0.29 credits', color:'#4d6bfe',
-      svg:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><path d="M4 13c2.5 0 3.2-5 6-5s3.5 5 6 5 3-2 4-2"/></svg>' },
-    { name:'DeepSeek-V4-Flash', tags:['推理','视觉'], credits:'x0.06 credits', color:'#4d6bfe',
-      svg:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7" stroke-linecap="round"><path d="M4 13c2.5 0 3.2-5 6-5s3.5 5 6 5 3-2 4-2"/></svg>' },
-    { name:'doubao-seed-2-0-code', tags:['推理'], credits:'x0.50 credits', color:'#1664ff',
-      svg:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.7"><path d="M9 4.5c4 0 7 3 7 7.5s-2.8 7.5-6.5 7.5c-2 0-3.5-1.4-3.5-3.4 0-2.6 3-3 3-5.6 0-1.8-2-2-2-4 0-1.3 .9-2.4 2-2.4z"/></svg>' },
+    { name:'Auto', desc:'根据任务自动匹配最合适的模型。' },
+    { name:'GPT-4o', desc:'OpenAI 旗舰多模态模型，推理能力强，适合复杂分析与创作。' },
+    { name:'Claude 3.5 Sonnet', desc:'Anthropic 高效模型，擅长长文本理解与代码生成。' },
+    { name:'Gemini 1.5 Pro', desc:'Google 长上下文模型，支持百万级 token，适合文档分析。' },
+    { name:'DeepSeek-V3', desc:'深度求索最新模型，中文理解与代码能力突出。' },
+    { name:'Qwen-Max', desc:'通义千问顶级模型，中文场景表现优异。' },
+    { name:'Llama 3.1 405B', desc:'Meta 开源大模型，4050亿参数，性能接近闭源旗舰。' },
+    { name:'Mistral Large', desc:'Mistral AI 旗舰模型，多语言能力强，推理效率高。' },
   ];
-  let currentModel = 'doubao-seed-2-0-code';
+  let currentModel = 'Auto';
   const modelSheet = $('modelSheet');
   const modelSheetOverlay = $('modelSheetOverlay');
-  function renderModelList() {
-    $('modelCount').textContent = `${MODELS.length} 个可用`;
-    $('modelList').innerHTML = MODELS.map(m => `
+  function renderModelList(query='') {
+    const q = query.trim().toLowerCase();
+    const filtered = MODELS.filter(m => m.name.toLowerCase().includes(q) || m.desc.toLowerCase().includes(q));
+    $('modelList').innerHTML = filtered.map(m => `
       <div class="model-row${m.name === currentModel ? ' selected' : ''}" data-model="${m.name}">
-        <div class="m-logo" style="background:${m.color}">${m.svg}</div>
-        <div class="m-main">
-          <span class="m-name">${m.name}</span>
-          ${m.tags.map(t => `<span class="m-tag${t === '视觉' ? ' vision' : ''}">${t}</span>`).join('')}
-          ${m.badge ? `<span class="m-badge">${m.badge}</span>` : ''}
+        <svg class="mi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6v6H9z"/><path d="M9 1v2M15 1v2M9 21v2M15 21v2M1 9h2M1 15h2M21 9h2M21 15h2"/></svg>
+        <div>
+          <div class="name">${m.name}</div>
+          <div class="desc">${m.desc}</div>
         </div>
-        <span class="m-credits">${m.credits}</span>
-        <span class="m-check">${m.name === currentModel ? '✓' : ''}</span>
       </div>
     `).join('');
   }
   function openModelSheet() {
+    $('modelSearchInput').value = '';
     renderModelList();
     modelSheetOverlay.classList.add('show');
     modelSheet.classList.add('open');
@@ -2123,12 +2242,161 @@
   }
   $('homeModelBtn').addEventListener('click', openModelSheet);
   $('chatModelBtn').addEventListener('click', openModelSheet);
-  $('modelSheetClose').addEventListener('click', closeModelSheet);
   modelSheetOverlay.addEventListener('click', closeModelSheet);
   $('modelList').addEventListener('click', e => {
     const row = e.target.closest('.model-row');
     if (row) selectModel(row.dataset.model);
   });
+  $('modelSearchInput').addEventListener('input', e => renderModelList(e.target.value));
+  // 模型面板：拖动 sheet-grip 向下关闭
+  (function(){
+    const grip = modelSheet.querySelector('.sheet-grip');
+    let startY = 0, currentY = 0, dragging = false;
+    function onStart(y){
+      startY = y; currentY = y; dragging = true;
+      modelSheet.style.transition = 'none';
+    }
+    function onMove(y){
+      if(!dragging) return;
+      currentY = y;
+      const dy = Math.max(0, currentY - startY);
+      modelSheet.style.transform = `translateY(${dy}px)`;
+      modelSheetOverlay.style.opacity = String(1 - dy / 300);
+    }
+    function onEnd(){
+      if(!dragging) return;
+      dragging = false;
+      const dy = currentY - startY;
+      modelSheet.style.transition = '';
+      modelSheetOverlay.style.opacity = '';
+      if(dy > 80){
+        closeModelSheet();
+        modelSheet.style.transform = '';
+      } else {
+        modelSheet.style.transform = '';
+      }
+    }
+    grip.addEventListener('touchstart', e => onStart(e.touches[0].clientY), {passive:true});
+    grip.addEventListener('touchmove', e => onMove(e.touches[0].clientY), {passive:true});
+    grip.addEventListener('touchend', onEnd);
+    grip.addEventListener('mousedown', e => onStart(e.clientY));
+    window.addEventListener('mousemove', e => onMove(e.clientY));
+    window.addEventListener('mouseup', onEnd);
+  })();
+  // ══════════════════════════════════════════
+  // 技能选择面板
+  // ══════════════════════════════════════════
+  const SKILLS = [
+    { name:'api-gateway-1.0.116', desc:'API 网关管理与配置工具，支持路由规则定义、请求转发和接口监控。' },
+    { name:'cad-skill', desc:'CAD 图纸智能解析与处理技能，支持图纸识别、尺寸提取和格式转换。' },
+    { name:'cron', desc:'定时任务调度与管理工具，支持周期性任务配置、执行监控和日志查看。' },
+    { name:'docling-document-intelligence', desc:'文档智能处理引擎，支持多格式文档解析、内容提取和结构化分析。' },
+    { name:'machining-part-assistant', desc:'机械加工零件辅助设计工具，支持加工工艺规划和参数优化。' },
+    { name:'officecli', desc:'Office 文档命令行处理工具，支持批量文档操作和自动化办公流程。' },
+    { name:'sheet-formula-expert', desc:'电子表格公式专家，支持复杂公式编写、数据分析和报表生成。' },
+    { name:'drawing-param-extractor', desc:'工程图纸参数提取器，支持从图纸中自动提取尺寸、公差和标注信息。' },
+    { name:'sim-report-generator', desc:'仿真报告自动生成工具，支持仿真结果汇总、图表生成和报告导出。' },
+    { name:'tolerance-checker', desc:'公差检测与验证工具，支持尺寸公差计算、配合分析和质量检测。' },
+  ];
+  let selectedSkills = [];
+  const skillSheet = $('skillSheet');
+  const skillSheetOverlay = $('skillSheetOverlay');
+  function renderSkillList(query='') {
+    const q = query.trim().toLowerCase();
+    const filtered = SKILLS.filter(s => s.name.toLowerCase().includes(q) || s.desc.toLowerCase().includes(q));
+    $('skillList').innerHTML = filtered.map(s => `
+      <div class="model-row${selectedSkills.includes(s.name) ? ' selected' : ''}" data-skill="${s.name}">
+        <svg class="mi" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <div>
+          <div class="name">${s.name}</div>
+          <div class="desc">${s.desc}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+  function openSkillSheet() {
+    $('skillSearchInput').value = '';
+    renderSkillList();
+    skillSheetOverlay.classList.add('show');
+    skillSheet.classList.add('open');
+  }
+  function closeSkillSheet() {
+    skillSheetOverlay.classList.remove('show');
+    skillSheet.classList.remove('open');
+  }
+  function toggleSkill(name) {
+    const idx = selectedSkills.indexOf(name);
+    if (idx >= 0) {
+      selectedSkills.splice(idx, 1);
+    } else {
+      selectedSkills.push(name);
+    }
+    renderSelectedSkillTags();
+    renderSkillList($('skillSearchInput').value);
+    syncAttachSkillActive();
+  }
+  function renderSelectedSkillTags() {
+    const html = selectedSkills.map(name => `
+      <div class="skill-tag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+        <span>${name}</span>
+        <button class="st-close" data-skill="${name}" aria-label="移除">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+    `).join('');
+    $('chatSkillTags').innerHTML = html;
+    $('homeSkillTags').innerHTML = html;
+  }
+  skillSheetOverlay.addEventListener('click', closeSkillSheet);
+  $('skillList').addEventListener('click', e => {
+    const row = e.target.closest('.model-row');
+    if (row) toggleSkill(row.dataset.skill);
+  });
+  $('chatSkillTags').addEventListener('click', e => {
+    const btn = e.target.closest('.st-close');
+    if (btn) toggleSkill(btn.dataset.skill);
+  });
+  $('homeSkillTags').addEventListener('click', e => {
+    const btn = e.target.closest('.st-close');
+    if (btn) toggleSkill(btn.dataset.skill);
+  });
+  $('skillSearchInput').addEventListener('input', e => renderSkillList(e.target.value));
+  // 技能面板：拖动 sheet-grip 向下关闭
+  (function(){
+    const grip = skillSheet.querySelector('.sheet-grip');
+    let startY = 0, currentY = 0, dragging = false;
+    function onStart(y){
+      startY = y; currentY = y; dragging = true;
+      skillSheet.style.transition = 'none';
+    }
+    function onMove(y){
+      if(!dragging) return;
+      currentY = y;
+      const dy = Math.max(0, currentY - startY);
+      skillSheet.style.transform = `translateY(${dy}px)`;
+      skillSheetOverlay.style.opacity = String(1 - dy / 300);
+    }
+    function onEnd(){
+      if(!dragging) return;
+      dragging = false;
+      const dy = currentY - startY;
+      skillSheet.style.transition = '';
+      skillSheetOverlay.style.opacity = '';
+      if(dy > 80){
+        closeSkillSheet();
+        skillSheet.style.transform = '';
+      } else {
+        skillSheet.style.transform = '';
+      }
+    }
+    grip.addEventListener('touchstart', e => onStart(e.touches[0].clientY), {passive:true});
+    grip.addEventListener('touchmove', e => onMove(e.touches[0].clientY), {passive:true});
+    grip.addEventListener('touchend', onEnd);
+    grip.addEventListener('mousedown', e => onStart(e.clientY));
+    window.addEventListener('mousemove', e => onMove(e.clientY));
+    window.addEventListener('mouseup', onEnd);
+  })();
 
   // ══════════════════════════════════════════
   // 定时任务管理页面 (Task Screen)
@@ -2425,15 +2693,19 @@
   // 打开新建/编辑任务表单
   let editTaskIdx = -1;
   let editIsMock = false;
+  let editMockName = '';
+  let editMode = false;
   function openTaskForm(idx, isMock, mockName) {
     editTaskIdx = idx !== undefined ? idx : -1;
     editIsMock = isMock || false;
+    editMockName = mockName || '';
+    editMode = (idx >= 0) || (isMock && mockName);
 
     $('taskMainView').classList.remove('active');
     $('taskDetailView').classList.remove('active');
     $('taskFormView').classList.add('active');
 
-    if (idx >= 0) {
+    if (editMode) {
       const taskData = isMock ? TASK_MOCKS.find(t => t.name === mockName) : tasks[idx];
       if (taskData) {
         $('tfTaskName').value = taskData.name;
@@ -2479,13 +2751,29 @@
     const time = tfFreq === '手动触发' ? '--' : ($('tfTaskTime').value || '09:00');
     const content = $('tfTaskContent').value.trim();
 
-    if (editTaskIdx >= 0) {
+    if (editMode) {
       // 编辑模式
       if (editIsMock) {
-        // 将 mock 转为用户任务
-        tasks.unshift({ name, agent, freq: tfFreq, time, content, active: true });
+        const mock = TASK_MOCKS.find(t => t.name === editMockName);
+        if (mock) {
+          // 同步执行历史映射 key（如果名称改了）
+          if (editMockName !== name && HISTORY_MOCKS[editMockName]) {
+            HISTORY_MOCKS[name] = HISTORY_MOCKS[editMockName];
+            delete HISTORY_MOCKS[editMockName];
+          }
+          Object.assign(mock, { name, agent, freq: tfFreq, time, content });
+          // 同步当前详情页引用
+          if (currentDetailIsMock && currentDetailMockName === editMockName) {
+            currentDetailTask = mock;
+            currentDetailMockName = name;
+          }
+        }
       } else {
         tasks[editTaskIdx] = { name, agent, freq: tfFreq, time, content, active: tasks[editTaskIdx].active };
+        // 同步当前详情页引用
+        if (!currentDetailIsMock && currentDetailTask === tasks[editTaskIdx]) {
+          currentDetailTask = tasks[editTaskIdx];
+        }
       }
     } else {
       // 新建
