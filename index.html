@@ -63,7 +63,7 @@
       transform:translateX(0);
       opacity:1;
       transition:transform .25s ease,opacity .25s ease;
-      padding-bottom: calc(var(--nav-h) + env(safe-area-inset-bottom));
+      padding-bottom: var(--nav-h);
     }
     .screen::-webkit-scrollbar{display:none}
     .screen.active{display:block}
@@ -82,10 +82,10 @@
       position:absolute;left:0;right:0;bottom:0;
       height:var(--nav-h);
       display:grid;grid-template-columns:repeat(4,1fr);
-      background:rgba(255,255,255,.95);
+      background:var(--surface);
       border-top:1px solid var(--line);
-      backdrop-filter:blur(20px);z-index:50;
-      padding-bottom: env(safe-area-inset-bottom);
+      border-radius:0 0 34px 34px;
+      z-index:50;
     }
     .nav-item{
       display:flex;flex-direction:column;align-items:center;
@@ -370,6 +370,40 @@
     .history-list{flex:1;overflow-y:auto;padding:2px 14px 8px;scrollbar-width:none}
     .history-list::-webkit-scrollbar{display:none}
     .history-group-label{font-size:9.5px;font-weight:700;color:var(--muted);padding:9px 0 4px;text-transform:uppercase;letter-spacing:.4px}
+    /* 侧边栏多功能区：可展开分组 + 新建按钮 */
+    .group-head{
+      display:flex;align-items:center;gap:6px;
+      padding:11px 0 5px;cursor:pointer;user-select:none;
+    }
+    .group-head .gh-caret{font-size:10px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+    .group-head.collapsed .gh-caret{transform:rotate(-90deg)}
+    .group-head .gh-title{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;flex:1}
+    .group-head .gh-count{font-size:9px;font-weight:700;color:var(--green);background:var(--green-l);border-radius:6px;padding:1px 6px}
+    .group-head .gh-add{
+      width:22px;height:22px;border-radius:7px;flex-shrink:0;
+      background:var(--green-l);color:var(--green);font-size:15px;font-weight:700;
+      display:grid;place-items:center;line-height:1;
+    }
+    .group-head .gh-more{
+      width:22px;height:22px;border-radius:5px;flex-shrink:0;
+      color:var(--muted);font-size:13px;font-weight:700;
+      display:grid;place-items:center;line-height:1;cursor:pointer;
+    }
+    .group-head .gh-arrow{
+      margin-left:auto;width:24px;height:24px;border-radius:6px;flex-shrink:0;
+      color:var(--text2);font-size:17px;font-weight:600;
+      display:grid;place-items:center;line-height:1;cursor:pointer;
+    }
+    .group-body{overflow:hidden;transition:max-height .25s ease}
+    .group-head.collapsed + .group-body{max-height:0!important}
+    .task-empty-row{font-size:11px;color:var(--muted);padding:8px 0 4px}
+    /* 抽屉头部新建会话按钮 */
+    .drawer-new{
+      width:34px;height:34px;border-radius:50%;
+      background:var(--green);color:#fff;font-size:19px;font-weight:700;
+      display:grid;place-items:center;line-height:1;flex-shrink:0;justify-self:center;
+      box-shadow:0 3px 10px rgba(29,185,106,.32);
+    }
     .history-item{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1px solid var(--line2);cursor:pointer}
     .history-item:last-child{border-bottom:0}
     .h-avatar{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;flex-shrink:0}
@@ -378,6 +412,41 @@
     .h-info strong{display:block;font-size:12px;margin-bottom:1px;color:var(--text)}
     .h-info span{font-size:10px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:200px}
     .h-time{font-size:9px;color:var(--muted);flex-shrink:0}
+    .h-dots{font-size:14px;color:var(--muted);flex-shrink:0;width:24px;height:24px;display:grid;place-items:center;cursor:pointer;border-radius:4px}
+    .h-dots:active{background:var(--bg)}
+    /* 置顶标志 */
+    .h-pin-badge{display:none;flex-shrink:0;width:16px;height:16px;border-radius:3px;background:var(--green-l);color:var(--green);font-size:9px;place-items:center;margin-right:2px}
+    .h-pin-badge.show{display:grid}
+    .h-pin-badge svg{width:9px;height:9px}
+    .history-group-label{font-size:10px;font-weight:700;color:var(--muted);padding:10px 0 4px}
+    /* 管理模式 */
+    .manage-mode .history-item .h-avatar{opacity:.5;transition:opacity .2s}
+    .mgmt-check{display:none;width:20px;height:20px;border-radius:50%;border:2px solid var(--line);flex-shrink:0;margin-right:4px;place-items:center;transition:all .15s}
+    .manage-mode .mgmt-check{display:grid}
+    .mgmt-check.checked{background:var(--green);border-color:var(--green)}
+    .mgmt-check.checked svg{display:block;width:11px;height:11px;stroke:#fff;stroke-width:2.5}
+    .mgmt-actions{display:none;padding:8px 14px;border-top:1px solid var(--line);background:var(--surface);gap:8px}
+    .manage-mode .mgmt-actions{display:flex}
+    .mgmt-act-btn{flex:1;text-align:center;padding:9px 0;border-radius:9px;font-size:12px;font-weight:700;background:var(--bg);color:var(--red);border:1px solid var(--line)}
+    .mgmt-act-btn:active{background:var(--red-l)}
+    .mgmt-act-btn.green{color:var(--green);border-color:rgba(29,185,106,.3);background:var(--green-l)}
+    .mgmt-act-btn.green:active{background:rgba(29,185,106,.25)}
+    /* 单条操作弹出菜单 */
+    .item-actions-overlay{display:none;position:absolute;inset:0;z-index:80}
+    .item-actions-overlay.show{display:block}
+    .item-action-sheet{position:absolute;left:0;right:0;bottom:0;z-index:81;background:var(--surface);border-radius:18px 18px 0 0;padding:0;transform:translateY(100%);transition:transform .22s ease;box-shadow:0 -8px 32px rgba(30,50,100,.2)}
+    .item-action-sheet.open{transform:translateY(0)}
+    .ias-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 10px}
+    .ias-header strong{font-size:13px;color:var(--text2)}
+    .ias-done{font-size:14px;font-weight:700;color:var(--green);cursor:pointer}
+    .ias-done:active{opacity:.6}
+    .ias-items{padding:0 0 8px}
+    .ias-item{display:flex;align-items:center;width:100%;text-align:left;padding:14px 20px;font-size:14px;font-weight:600;color:var(--text)}
+    .ias-item:active{background:var(--green-l);color:var(--green)}
+    .ias-item.danger:active{background:var(--red-l);color:var(--red)}
+    .ias-item.danger{color:var(--red)}
+    .ias-cancel{text-align:center;padding:14px;font-size:13px;font-weight:600;color:var(--text2);border-top:6px solid var(--bg);width:100%}
+    .ias-cancel:active{background:var(--bg)}
     /* 新增：加载动画 */
     .typing {
       display: flex;
@@ -486,6 +555,7 @@
       font-size:12px;font-weight:600;color:var(--text2);
     }
     .freq-opt.active{border-color:var(--green);background:var(--green-l);color:var(--green)}
+    .freq-grid{display:grid!important;grid-template-columns:repeat(3,1fr);gap:7px}
     .sheet-submit{
       width:100%;padding:13px;border-radius:13px;
       background:var(--green);color:#fff;font-size:14px;font-weight:700;
@@ -562,6 +632,10 @@
     .al-item:last-child{border-bottom:0}
     .al-item svg{width:19px;height:19px;stroke:var(--text2);flex-shrink:0}
     .al-badge{font-size:9px;font-weight:600;color:var(--green);background:var(--green-l);padding:1px 6px;border-radius:5px}
+    /* 选中（绿色高亮）状态 */
+    .al-item.active{color:var(--green);font-weight:700}
+    .al-item.active svg{stroke:var(--green)}
+    .al-item.active::after{content:'✓';margin-left:auto;color:var(--green);font-size:14px;font-weight:800}
     /* 模型名（可点击切换） */
     .model-name-chip{
       display:inline-flex;align-items:center;height:24px;
@@ -578,6 +652,20 @@
     .hr-info{flex:1;min-width:0}
     .hr-info strong{display:block;font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:2px}
     .hr-info span{font-size:10.5px;color:var(--muted)}
+    /* 对话中：任务完成后「设为定时任务」入口 */
+    .post-task-actions{display:flex;justify-content:flex-start;margin:6px 0 2px;padding-left:2px}
+    .set-task-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      padding:7px 13px;border-radius:999px;
+      background:var(--amber-l);border:1px solid rgba(245,163,0,.3);
+      color:var(--amber);font-size:12px;font-weight:600;cursor:pointer;
+    }
+    .set-task-btn svg{width:14px;height:14px;stroke:currentColor;display:block}
+    .task-created-tip{
+      margin:8px 0;padding:9px 12px;border-radius:11px;
+      background:var(--green-l);border:1px solid rgba(29,185,106,.28);
+      color:var(--green);font-size:11.5px;font-weight:600;line-height:1.55;
+    }
     /* chat agent chips above chat input — single row, scrollable */
     .chat-agent-chips{
       display:flex;align-items:center;gap:8px;
@@ -596,6 +684,179 @@
     .chat-agent-chips .agent-chip.active{
       background:var(--green-l);border-color:var(--green);color:var(--green);
     }
+    /* ═══ TASK SCREEN (定时任务管理) ═══ */
+    #taskScreen{background:var(--bg);display:none!important;flex-direction:column;padding-bottom:0!important;top:var(--status-h)!important;left:0!important;right:0!important;bottom:0!important;height:auto!important}
+    #taskScreen.active{display:flex!important}
+    .task-header{
+      height:52px;display:grid;grid-template-columns:44px 1fr 44px;
+      align-items:center;padding:0 10px;
+      background:var(--bg);flex-shrink:0;position:sticky;top:0;z-index:5;
+    }
+    .task-header-title{text-align:center;font-size:15px;font-weight:800;color:var(--text)}
+    /* 搜索栏 */
+    .task-search-bar{padding:0 14px 10px}
+    .task-search-wrap{display:flex;align-items:center;gap:8px;background:var(--surface);border:1.5px solid var(--line);border-radius:12px;padding:0 12px;height:38px}
+    .task-search-wrap input{flex:1;border:0;outline:0;background:transparent;font-size:13px;color:var(--text)}
+    .task-search-wrap input::placeholder{color:var(--muted)}
+    .task-search-clear{color:var(--muted);width:20px;height:20px;display:grid;place-items:center;font-size:12px;cursor:pointer}
+    .task-body{flex:1;overflow-y:auto;padding:12px 14px 20px;scrollbar-width:none}
+    .task-body::-webkit-scrollbar{display:none}
+    .tsk-card{
+      display:flex;align-items:center;gap:10px;
+      background:var(--surface);border:1px solid var(--line);
+      border-radius:14px;padding:13px 14px;margin-bottom:10px;
+      cursor:pointer;text-align:left;width:100%;
+      box-shadow:0 1px 6px rgba(60,90,160,.05);
+      transition:box-shadow .15s,transform .12s;
+    }
+    .tsk-card:active{transform:scale(.97)}
+    .tsk-card-icon{
+      width:42px;height:42px;border-radius:12px;flex-shrink:0;
+      display:grid;place-items:center;font-size:20px;
+      background:var(--green-l);color:var(--green);
+    }
+    .tsk-card-info{flex:1;min-width:0}
+    .tsk-card-info strong{display:block;font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tsk-card-info .tsk-desc{font-size:11px;color:var(--muted);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .tsk-card-meta{display:flex;align-items:center;gap:6px;margin-top:4px}
+    .tsk-tag-sm{
+      display:inline-flex;align-items:center;gap:3px;
+      height:20px;padding:0 7px;border-radius:6px;
+      font-size:10px;font-weight:600;white-space:nowrap;
+      background:var(--bg);color:var(--text2);
+    }
+    .tsk-tag-sm.amber{background:var(--green-l);color:var(--green)}
+    .tsk-tag-sm.green{background:var(--green-l);color:var(--green)}
+    .tsk-tag-sm.blue{background:var(--blue-l);color:var(--blue)}
+    .tsk-card-arrow{color:var(--muted);font-size:18px;flex-shrink:0}
+    /* 简洁列表项 */
+    .tsk-list-item{
+      display:flex;align-items:center;gap:10px;
+      padding:14px 12px;margin-bottom:10px;
+      background:var(--surface);border:1px solid var(--line);border-radius:14px;
+      box-shadow:0 2px 8px rgba(60,90,160,.06);
+      cursor:pointer;text-align:left;width:100%;
+    }
+    .tsk-list-item:last-child{margin-bottom:0}
+    .tsk-list-item:active{transform:scale(.99);box-shadow:0 1px 4px rgba(60,90,160,.04)}
+    .tsk-list-avatar{
+      width:36px;height:36px;border-radius:10px;flex-shrink:0;
+      display:grid;place-items:center;
+      background:var(--green-l);color:var(--green);
+    }
+    .tsk-list-avatar svg{width:18px;height:18px;display:block}
+    .tsk-list-info{flex:1;min-width:0}
+    .tsk-list-info strong{display:block;font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:2px}
+    .tsk-list-info span{font-size:11px;color:var(--muted)}
+    .tsk-list-time{display:none}
+    .tsk-list-dots{font-size:16px;color:var(--muted);flex-shrink:0;width:28px;height:28px;display:grid;place-items:center;cursor:pointer;border-radius:4px;margin-left:auto}
+    .tsk-list-dots:active{background:var(--bg)}
+    .tsk-empty{text-align:center;padding:40px 20px;color:var(--muted)}
+    .tsk-empty-icon{font-size:40px;margin-bottom:10px;opacity:.6}
+    .tsk-empty p{font-size:12.5px;line-height:1.6}
+    .tsk-empty .tsk-create-btn{
+      display:inline-flex;align-items:center;gap:6px;
+      margin-top:14px;padding:10px 20px;border-radius:12px;
+      background:var(--green);color:#fff;font-size:13px;font-weight:700;
+      box-shadow:0 4px 12px rgba(29,185,106,.3);
+    }
+    .tsk-create-btn svg{width:14px;height:14px;stroke:#fff;display:block}
+    .tsk-section-label{
+      font-size:10.5px;font-weight:700;color:var(--muted);
+      padding:4px 4px 8px;text-transform:uppercase;letter-spacing:.5px;
+    }
+    /* Detail views */
+    .task-main-view,.task-detail-view{
+      display:none;flex-direction:column;flex:1;min-height:0;
+    }
+    .task-main-view.active,.task-detail-view.active{display:flex}
+    .task-detail-body{flex:1;overflow-y:auto;padding:12px 14px 20px;scrollbar-width:none}
+    .task-detail-body::-webkit-scrollbar{display:none}
+    .td-info-card{
+      background:var(--surface);border:1px solid var(--line);
+      border-radius:14px;padding:16px;margin-bottom:14px;
+      box-shadow:0 1px 6px rgba(60,90,160,.05);
+    }
+    .td-info-head{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+    .td-info-icon{
+      width:44px;height:44px;border-radius:12px;flex-shrink:0;
+      display:grid;place-items:center;font-size:22px;
+      background:var(--green-l);color:var(--green);
+    }
+    .td-info-name{font-size:15px;font-weight:800;color:var(--text);margin-bottom:3px}
+    .td-info-agent{font-size:11px;color:var(--blue);background:var(--blue-l);display:inline-block;padding:2px 8px;border-radius:5px;font-weight:600}
+    .td-info-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+    .td-info-field{background:var(--bg);border-radius:10px;padding:9px 11px}
+    .td-info-field .td-label{font-size:9.5px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px}
+    .td-info-field .td-value{font-size:12.5px;font-weight:700;color:var(--text)}
+    .th-list{margin-top:4px}
+    .th-item{
+      display:flex;align-items:flex-start;gap:10px;
+      background:var(--surface);border:1px solid var(--line);
+      border-radius:12px;padding:12px 13px;margin-bottom:8px;
+      box-shadow:0 1px 4px rgba(60,90,160,.03);
+      cursor:pointer;text-align:left;width:100%;
+      transition:background .15s;
+    }
+    .th-item:active{background:var(--bg)}
+    .th-status{
+      width:22px;height:22px;border-radius:50%;flex-shrink:0;
+      display:grid;place-items:center;font-size:11px;font-weight:800;margin-top:1px;
+    }
+    .th-ok{background:var(--green-l);color:var(--green)}
+    .th-fail{background:var(--red-l);color:var(--red)}
+    .th-running{background:var(--blue-l);color:var(--blue);animation:pulse-blue 1.5s infinite}
+    @keyframes pulse-blue{0%,100%{opacity:1}50%{opacity:.5}}
+    .th-info{flex:1;min-width:0}
+    .th-info strong{display:block;font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:2px}
+    .th-info .th-summary{font-size:10.5px;color:var(--muted);line-height:1.45}
+    .th-info .th-time{font-size:9.5px;color:var(--muted);margin-top:3px}
+    .th-detail{
+      display:none;padding:10px 0 0;margin-top:8px;
+      border-top:1px solid var(--line2);
+      font-size:11px;color:var(--text2);line-height:1.65;
+    }
+    .th-item.expanded .th-detail{display:block}
+    .th-item.expanded{background:var(--bg);border-color:var(--green)}
+    .td-actions{
+      display:flex;gap:8px;padding:12px 14px 18px;
+      border-top:1px solid var(--line2);flex-shrink:0;
+      background:var(--bg);
+    }
+    .td-action-btn{
+      flex:1;text-align:center;padding:11px 0;border-radius:12px;
+      font-size:12.5px;font-weight:700;border:1.5px solid var(--line);
+      background:var(--surface);color:var(--text2);
+      display:flex;align-items:center;justify-content:center;gap:5px;
+    }
+    .td-action-btn.primary{
+      background:var(--green);color:#fff;border-color:var(--green);
+      box-shadow:0 3px 10px rgba(29,185,106,.25);
+    }
+    .td-action-btn svg{width:14px;height:14px;stroke:currentColor;display:block}
+    .task-form-card{
+      background:var(--surface);border:1px solid var(--green);border-radius:16px;
+      padding:14px;margin-bottom:14px;
+      box-shadow:0 2px 12px rgba(29,185,106,.1);
+    }
+    .task-form-card .field{margin-bottom:12px}
+    .task-form-card .field:last-child{margin-bottom:0}
+    .task-form-actions{display:flex;gap:8px;margin-top:4px}
+    .task-form-actions button{flex:1;text-align:center;padding:10px 0;border-radius:10px;font-size:12.5px;font-weight:700}
+    .task-form-actions .cancel-btn{background:var(--bg);border:1px solid var(--line);color:var(--text2)}
+    .task-form-actions .confirm-btn{background:var(--green);color:#fff;border:0;box-shadow:0 3px 10px rgba(29,185,106,.2)}
+    /* 右下角悬浮加号 */
+    .task-fab{
+      position:absolute;bottom:80px;right:18px;z-index:99;
+      width:48px;height:48px;border-radius:50%;
+      background:var(--green);color:#fff;font-size:24px;font-weight:500;
+      display:grid;place-items:center;
+      box-shadow:0 4px 16px rgba(29,185,106,.35);
+      cursor:pointer;transition:transform .15s,box-shadow .15s;
+    }
+    .task-fab:active{transform:scale(.9);box-shadow:0 2px 8px rgba(29,185,106,.25)}
+    .task-detail-view .task-fab,.task-main-view .task-fab{display:grid}
+    .task-form-view .task-fab{display:none}
   </style>
 </head>
 <body>
@@ -746,12 +1007,117 @@
       </div>
     </div>
   </section>
+  <!-- ═══ TASK SCREEN (定时任务管理) ═══ -->
+  <section class="screen" id="taskScreen">
+    <div class="task-main-view active" id="taskMainView">
+      <header class="task-header">
+        <button class="icon-btn" id="taskBackBtn">‹</button>
+        <span class="task-header-title">定时任务</span>
+        <button class="icon-btn" id="taskSearchBtn" title="搜索定时任务" style="font-size:17px">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+        </button>
+      </header>
+      <!-- 搜索框 -->
+      <div class="task-search-bar" id="taskSearchBar" style="display:none">
+        <div class="task-search-wrap">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2" stroke-linecap="round"><circle cx="10" cy="10" r="7"/><line x1="21" y1="21" x2="15" y2="15"/></svg>
+          <input type="text" id="taskSearchInput" placeholder="搜索定时任务..." />
+          <button class="task-search-clear" id="taskSearchClear" style="display:none">✕</button>
+        </div>
+      </div>
+      <div class="task-body" id="taskBody">
+        <!-- 动态填充 -->
+      </div>
+      <button class="task-fab" id="taskAddBtn" title="新建定时任务">＋</button>
+    </div>
+    <div class="task-detail-view" id="taskDetailView">
+      <header class="task-header">
+        <button class="icon-btn" id="taskDetailBackBtn">‹</button>
+        <span class="task-header-title" id="taskDetailTitle">任务详情</span>
+        <span></span>
+      </header>
+      <div class="task-detail-body" id="taskDetailBody">
+        <!-- 动态填充 -->
+      </div>
+      <div class="td-actions" id="taskDetailActions">
+        <button class="td-action-btn" id="tdRunNow">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polygon points="10,8 16,12 10,16"/></svg>
+          立即执行
+        </button>
+        <button class="td-action-btn" id="tdEditTask">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5z"/></svg>
+          编辑任务
+        </button>
+        <button class="td-action-btn primary" id="tdToggleActive">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><polyline points="9 12 11 14 15 10"/></svg>
+          启用
+        </button>
+      </div>
+    </div>
+    <!-- 任务详情页内嵌新建/编辑表单 -->
+    <div class="task-detail-view" id="taskFormView">
+      <header class="task-header">
+        <button class="icon-btn" id="taskFormBackBtn">‹</button>
+        <span class="task-header-title" id="taskFormTitle">新建定时任务</span>
+        <button class="icon-btn" id="taskChatCreateBtn" title="对话创建" style="font-size:17px">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </button>
+      </header>
+      <div class="task-body" id="taskFormBody">
+        <div class="task-form-card">
+          <div class="field">
+            <label>任务名称</label>
+            <input type="text" id="tfTaskName" placeholder="例如：每日齿轮图纸批量分析" />
+          </div>
+          <div class="field">
+            <label>执行助手</label>
+            <select id="tfTaskAgent">
+              <option>MetaLLM</option>
+              <option>工程图纸分析</option>
+              <option>三维CAD设计</option>
+              <option>联动仿真</option>
+              <option>Excel 表格助手</option>
+              <option>PPT 演示助手</option>
+              <option>Word 文档助手</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>执行频率</label>
+            <div class="freq-row freq-grid" id="tfFreqRow">
+              <button class="freq-opt active" data-freq="每天">每天</button>
+              <button class="freq-opt" data-freq="小时">小时</button>
+              <button class="freq-opt" data-freq="工作日">工作日</button>
+              <button class="freq-opt" data-freq="每周">每周</button>
+              <button class="freq-opt" data-freq="每月">每月</button>
+              <button class="freq-opt" data-freq="手动触发">手动触发</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>执行时间</label>
+            <input type="time" id="tfTaskTime" value="09:00" />
+          </div>
+          <div class="field">
+            <label>任务内容</label>
+            <textarea id="tfTaskContent" placeholder="描述每次定时执行的具体任务"></textarea>
+          </div>
+          <div class="task-form-actions">
+            <button class="cancel-btn" id="tfCancelBtn">取消</button>
+            <button class="confirm-btn" id="tfConfirmBtn">创建任务</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
   <!-- ═══ HISTORY DRAWER ═══ -->
   <aside class="drawer" id="historyDrawer">
     <div class="drawer-header">
       <button class="icon-btn" id="closeHistory">‹</button>
-      <strong>历史会话</strong>
-      <span></span>
+      <strong>会话与任务</strong>
+      <button class="drawer-new" id="drawerNewChat" title="新建会话">＋</button>
+    </div>
+    <div class="mgmt-actions" id="mgmtActions">
+      <button class="mgmt-act-btn green" id="mgmtPinBtn">置顶</button>
+      <button class="mgmt-act-btn" id="mgmtDelBtn">删除</button>
     </div>
     <div class="history-search">
       <svg width="15" height="15" viewBox="0 0 16 16" fill="none" stroke="var(--muted)" stroke-width="1.6" stroke-linecap="round">
@@ -761,18 +1127,34 @@
       <input type="text" id="historySearchInput" placeholder="搜索会话（图纸/仿真/表格等）..." />
     </div>
     <div class="history-list" id="historyList">
-      <div class="history-group-label">定时任务</div>
-      <div class="history-item" data-title="定时任务" data-msg="查看每日图纸自动分析任务的执行记录"><div class="h-avatar" style="background:var(--amber-l);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><div class="h-info"><strong>每日图纸自动分析</strong><span>每天 09:00 · 工程图纸分析 · 已执行 28 次</span></div><span class="h-time">2026-06-01 09:00</span></div>
-      <div class="history-item" data-title="定时任务" data-msg="查看每周仿真报告生成任务的执行记录"><div class="h-avatar" style="background:var(--amber-l);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><div class="h-info"><strong>每周仿真报告生成</strong><span>每周一 08:00 · 联动仿真 · 已执行 6 次</span></div><span class="h-time">2026-05-26 08:00</span></div>
-      <div class="history-item" data-title="定时任务" data-msg="查看每月产线良率汇总任务的执行记录"><div class="h-avatar" style="background:var(--amber-l);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg></div><div class="h-info"><strong>每月产线良率汇总</strong><span>每月 1 日 10:00 · Excel 表格助手 · 已执行 3 次</span></div><span class="h-time">2026-05-01 10:00</span></div>
-      <div class="history-group-label">其他</div>
-      <div class="history-item" data-title="齿轮图纸参数识别" data-msg="继续分析齿轮的加工公差和材料要求"><div class="h-avatar" style="background:var(--purple-l);color:var(--purple)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 9h16M9 9v11"/></svg></div><div class="h-info"><strong>齿轮图纸参数识别</strong><span>识别模数、齿数、齿顶圆直径等关键尺寸，分析加工风险...</span></div><span class="h-time">2026-06-01 14:32</span></div>
-      <div class="history-item" data-title="Excel 传感器数据清洗" data-msg="批量处理异常值并生成趋势图表"><div class="h-avatar" style="background:var(--green-l);color:var(--green)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 9.5h17M3.5 14.5h17M9 4.5v15"/></svg></div><div class="h-info"><strong>Excel 传感器数据清洗</strong><span>批量处理产线传感器采样数据，剔除异常值...</span></div><span class="h-time">2026-06-01 11:08</span></div>
-      <div class="history-item" data-title="叶轮仿真方案整理" data-msg="补充流体力学仿真的边界条件说明"><div class="h-avatar" style="background:var(--blue-l);color:var(--blue)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2-6 4 12 2.5-6H21"/></svg></div><div class="h-info"><strong>叶轮仿真方案整理</strong><span>调用 CAD 和仿真助手生成稳态/瞬态仿真方案...</span></div><span class="h-time">2026-05-31 17:45</span></div>
-      <div class="history-item" data-title="冲压产线PPT汇报" data-msg="补充产线效率分析图表"><div class="h-avatar" style="background:var(--amber-l);color:var(--amber)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="4" width="17" height="12" rx="2"/><path d="M12 16v4M8.5 20h7"/></svg></div><div class="h-info"><strong>冲压产线PPT汇报</strong><span>自动生成季度技术汇报，包含产能/良率分析...</span></div><span class="h-time">2026-05-31 10:20</span></div>
-      <div class="history-item" data-title="冲压产线联合仿真" data-msg="补充1D+3D仿真的对比分析"><div class="h-avatar" style="background:var(--cyan-l);color:var(--cyan)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.2 11l7.6-4M8.2 13l7.6 4"/></svg></div><div class="h-info"><strong>冲压产线联合仿真</strong><span>1D+3D 联合仿真分析报告，优化产线节拍...</span></div><span class="h-time">2026-05-26 16:02</span></div>
-      <div class="history-item" data-title="轴承选型Word文档" data-msg="补充轴承寿命计算和选型依据"><div class="h-avatar" style="background:var(--purple-l);color:var(--purple)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h5"/></svg></div><div class="h-info"><strong>轴承选型Word文档</strong><span>生成轴承选型报告，包含寿命/载荷/安装要求...</span></div><span class="h-time">2026-05-24 09:38</span></div>
-      <div class="history-item" data-title="减速机三维CAD建模" data-msg="优化齿轮箱壳体的结构强度"><div class="h-avatar" style="background:var(--cyan-l);color:var(--cyan)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 21V12M12 12l8-4.5M12 12L4 7.5"/></svg></div><div class="h-info"><strong>减速机三维CAD建模</strong><span>基于参数化设计生成减速机核心部件模型...</span></div><span class="h-time">2026-05-22 15:11</span></div>
+      <div class="group-head collapsed" id="taskGroupHead">
+        <span class="gh-caret">▾</span>
+        <span class="gh-title">定时任务</span>
+        <button class="gh-add" id="sidebarAddTask" title="新建定时任务">＋</button>
+        <button class="gh-arrow" id="sidebarTaskArrow" title="查看定时任务" style="position:relative;z-index:1">›</button>
+      </div>
+      <div class="group-body" id="taskGroupBody">
+      <div id="sidebarTaskList"></div>
+      </div>
+      <div class="group-head" id="chatGroupHead">
+        <span class="gh-caret">▾</span>
+        <span class="gh-title">历史会话</span>
+        <button class="gh-add" id="sidebarNewChat" title="新建会话">＋</button>
+        <button class="gh-more" id="chatMoreBtn" title="管理">⋯</button>
+      </div>
+      <div class="group-body" id="chatGroupBody">
+      <div class="history-group-label">今天</div>
+      <div class="history-item" data-title="齿轮图纸参数识别" data-msg="继续分析齿轮的加工公差和材料要求"><div class="h-info"><strong>齿轮图纸参数识别</strong><span>识别模数、齿数、齿顶圆直径等关键尺寸，分析加工风险...</span></div><button class="h-dots">⋯</button></div>
+      <div class="history-item" data-title="Excel 传感器数据清洗" data-msg="批量处理异常值并生成趋势图表"><div class="h-info"><strong>Excel 传感器数据清洗</strong><span>批量处理产线传感器采样数据，剔除异常值...</span></div><button class="h-dots">⋯</button></div>
+      <div class="history-group-label">昨天</div>
+      <div class="history-item" data-title="叶轮仿真方案整理" data-msg="补充流体力学仿真的边界条件说明"><div class="h-info"><strong>叶轮仿真方案整理</strong><span>调用 CAD 和仿真助手生成稳态/瞬态仿真方案...</span></div><button class="h-dots">⋯</button></div>
+      <div class="history-item" data-title="冲压产线PPT汇报" data-msg="补充产线效率分析图表"><div class="h-info"><strong>冲压产线PPT汇报</strong><span>自动生成季度技术汇报，包含产能/良率分析...</span></div><button class="h-dots">⋯</button></div>
+      <div class="history-group-label">本周</div>
+      <div class="history-item" data-title="冲压产线联合仿真" data-msg="补充1D+3D仿真的对比分析"><div class="h-info"><strong>冲压产线联合仿真</strong><span>1D+3D 联合仿真分析报告，优化产线节拍...</span></div><button class="h-dots">⋯</button></div>
+      <div class="history-group-label">5 月</div>
+      <div class="history-item" data-title="轴承选型Word文档" data-msg="补充轴承寿命计算和选型依据"><div class="h-info"><strong>轴承选型Word文档</strong><span>生成轴承选型报告，包含寿命/载荷/安装要求...</span></div><button class="h-dots">⋯</button></div>
+      <div class="history-item" data-title="减速机三维CAD建模" data-msg="优化齿轮箱壳体的结构强度"><div class="h-info"><strong>减速机三维CAD建模</strong><span>基于参数化设计生成减速机核心部件模型...</span></div><button class="h-dots">⋯</button></div>
+      </div>
     </div>
   </aside>
   <div class="overlay" id="overlay"></div>
@@ -816,6 +1198,55 @@
           <span>定时任务</span>
         </button>
       </div>
+    </div>
+  </aside>
+  <!-- ═══ 设为定时任务 BOTTOM SHEET（对话过程中入口） ═══ -->
+  <div class="sheet-overlay" id="taskSheetOverlay"></div>
+  <aside class="sheet" id="taskSheet">
+    <div class="sheet-grip"></div>
+    <div class="sheet-head">
+      <strong>设为定时任务 <span class="sheet-head-sub">把本次任务设置为周期自动执行</span></strong>
+      <button class="sheet-close" id="taskSheetClose" aria-label="关闭">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <div class="sheet-body">
+      <div class="field">
+        <label>任务名称</label>
+        <input type="text" id="sheetTaskName" placeholder="例如：每日齿轮图纸批量分析" />
+      </div>
+      <div class="field">
+        <label>执行助手</label>
+        <select id="sheetTaskAgent">
+          <option>MetaLLM</option>
+          <option>工程图纸分析</option>
+          <option>三维CAD设计</option>
+          <option>联动仿真</option>
+          <option>Excel 表格助手</option>
+          <option>PPT 演示助手</option>
+          <option>Word 文档助手</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>执行频率</label>
+        <div class="freq-row freq-grid" id="sheetFreqRow">
+          <button class="freq-opt active" data-freq="每天">每天</button>
+          <button class="freq-opt" data-freq="小时">小时</button>
+          <button class="freq-opt" data-freq="工作日">工作日</button>
+          <button class="freq-opt" data-freq="每周">每周</button>
+          <button class="freq-opt" data-freq="每月">每月</button>
+          <button class="freq-opt" data-freq="手动触发">手动触发</button>
+        </div>
+      </div>
+      <div class="field">
+        <label>执行时间</label>
+        <input type="time" id="sheetTaskTime" value="09:00" />
+      </div>
+      <div class="field">
+        <label>任务内容</label>
+        <textarea id="sheetTaskContent" placeholder="描述每次定时执行的具体任务"></textarea>
+      </div>
+      <button class="sheet-submit" id="sheetSubmitTask">创建定时任务</button>
     </div>
   </aside>
   <!-- ═══ BOTTOM NAV → 4个：首页、工具箱、发现、我的 -->
@@ -863,7 +1294,7 @@
 </main>
 <script>
   const $ = id => document.getElementById(id);
-  const screens = { home:$('homeScreen'), chat:$('chatScreen'), profile:$('profileScreen') };
+  const screens = { home:$('homeScreen'), chat:$('chatScreen'), profile:$('profileScreen'), task:$('taskScreen') };
   let prevScreen = 'home';
   let isTabSwitch = true;
   // 带动画的切换
@@ -887,12 +1318,19 @@
     document.querySelectorAll('.nav-item').forEach(b => {
       b.classList.toggle('active', b.dataset.target === name);
     });
+    // taskScreen 不需要底部导航栏
+    document.querySelector('.bottom-nav').style.display = name === 'task' ? 'none' : '';
     prevScreen = name;
     isTabSwitch = true;
   }
   // 初始化聊天内容
   function initChatContent(title) {
     const chatBody = $('chatBody');
+    // 重置 chatBody 样式
+    chatBody.style.display = '';
+    chatBody.style.justifyContent = '';
+    chatBody.style.alignItems = '';
+    chatBody.style.overflow = '';
     // 清空原有内容
     chatBody.innerHTML = '';
     
@@ -911,68 +1349,24 @@
 
     // 定时任务：渲染欢迎语 + 内联快捷创建表单 + 任务列表
     if (title === '定时任务') {
+      chatBody.style.display = 'flex';
+      chatBody.style.flexDirection = 'column';
+      chatBody.style.justifyContent = 'center';
+      chatBody.style.alignItems = 'center';
+      chatBody.style.overflow = 'hidden';
       chatBody.innerHTML = `
-        <div class="user-label">
-          <div class="agent-tag"><div class="agent-tag-icon">◈</div>定时任务</div>
-        </div>
-        ${buildStepCard('定时任务', welcomeMsg)}
-        <div class="step-card collapsible collapsed">
-          <div class="step-card-head"><div class="step-dot" style="background:var(--amber)"></div><span> 快捷创建定时任务</span><span class="step-chevron">›</span></div>
-          <div class="step-card-body">
-            <div class="field">
-              <label>任务名称</label>
-              <input type="text" id="taskName" placeholder="例如：每日齿轮图纸批量分析" />
-            </div>
-            <div class="field">
-              <label>执行助手</label>
-              <select id="taskAgent">
-                <option>工程图纸分析</option>
-                <option>三维CAD设计</option>
-                <option>联动仿真</option>
-                <option>Excel 表格助手</option>
-                <option>PPT 演示助手</option>
-                <option>Word 文档助手</option>
-              </select>
-            </div>
-            <div class="field">
-              <label>执行频率</label>
-              <div class="freq-row" id="freqRow">
-                <button class="freq-opt active" data-freq="每天">每天</button>
-                <button class="freq-opt" data-freq="每周">每周</button>
-                <button class="freq-opt" data-freq="每月">每月</button>
-              </div>
-            </div>
-            <div class="field">
-              <label>执行时间</label>
-              <input type="time" id="taskTime" value="09:00" />
-            </div>
-            <div class="field">
-              <label>任务内容</label>
-              <textarea id="taskContent" placeholder="描述每次定时执行的具体任务，例如：分析当日上传的所有齿轮图纸并生成公差汇总报告"></textarea>
-            </div>
-            <button class="sheet-submit" id="submitTask">创建定时任务</button>
+        <div class="hero-logo-wrap">
+          <div class="hero-logo-inner">
+            <svg viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M6 17 L14 9 L22 17 L14 25 Z" fill="#27c97a" opacity=".25" />
+              <path d="M12 17 L20 9 L28 17 L20 25 Z" fill="#27c97a" />
+              <path d="M14 17 L20 11 L26 17 L20 23 Z" fill="#fff" opacity=".5" />
+            </svg>
           </div>
         </div>
-        <div class="step-card collapsible">
-          <div class="step-card-head"><div class="step-dot" style="background:var(--green)"></div><span>已创建的定时任务</span><span class="step-chevron">›</span></div>
-          <div class="step-card-body"><div class="task-list" id="taskList"><div class="task-empty">暂无定时任务</div></div></div>
-        </div>
-        <div class="step-card collapsible collapsed">
-          <div class="step-card-head"><div class="step-dot" style="background:var(--blue)"></div><span>定时任务历史</span><span class="step-chevron">›</span></div>
-          <div class="step-card-body">
-            <div class="task-history" id="taskHistory">
-              <div class="history-row"><div class="hr-status hr-ok">✓</div><div class="hr-info"><strong>每日齿轮图纸批量分析</strong><span>工程图纸分析 · 06-01 09:00 · 处理 12 张图纸</span></div></div>
-              <div class="history-row"><div class="hr-status hr-ok">✓</div><div class="hr-info"><strong>每周仿真报告生成</strong><span>联动仿真 · 05-31 08:00 · 报告已导出 PDF</span></div></div>
-              <div class="history-row"><div class="hr-status hr-ok">✓</div><div class="hr-info"><strong>产线传感器数据清洗</strong><span>Excel 表格助手 · 05-30 22:00 · 共清洗 10000 条</span></div></div>
-              <div class="history-row"><div class="hr-status hr-fail">!</div><div class="hr-info"><strong>每日齿轮图纸批量分析</strong><span>工程图纸分析 · 05-29 09:00 · 数据源连接失败</span></div></div>
-              <div class="history-row"><div class="hr-status hr-ok">✓</div><div class="hr-info"><strong>冲压产线PPT汇报</strong><span>PPT 演示助手 · 05-28 08:30 · 已生成 18 页</span></div></div>
-            </div>
-          </div>
-        </div>
-        <div class="msg-time">▣ 05-26 16:02</div>
+        <div class="hero-title">AI for Engineering</div>
+        <div class="hero-sub">用自然语言描述你的定时任务需求<br>我会自动解析并创建任务</div>
       `;
-      bindTaskForm();
-      renderTasks();
       return;
     }
 
@@ -1103,17 +1497,264 @@
       // 添加AI回复
       chatBody.innerHTML += `
         ${buildStepCard($('chatTitle').textContent, aiReply.replace(/\n/g, '<br>'))}
+        ${chatTitle.includes('定时任务') ? '' : `
+        <div class="post-task-actions">
+          <button class="set-task-btn" data-agent="${chatTitle}" data-content="${encodeURIComponent(msg)}">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
+            设为定时任务
+          </button>
+        </div>`}
         <div class="msg-time">▣ 05-19 16:06</div>
       `;
       // 滚动到底部
       chatBody.scrollTop = chatBody.scrollHeight;
     }, 2000);
   }
+  // ═══ 历史会话管理 ═══
+  let manageMode = false;
+  let selectedItems = new Set();
+
+  $('chatMoreBtn').addEventListener('click', e => {
+    e.stopPropagation();
+    toggleManageMode();
+  });
+
+  function toggleManageMode() {
+    manageMode = !manageMode;
+    const drawer = $('historyDrawer');
+    drawer.classList.toggle('manage-mode', manageMode);
+    $('drawerNewChat').style.display = manageMode ? 'none' : '';
+    // 在关闭按钮位置旁边显示"完成"
+    if (manageMode) {
+      $('closeHistory').style.display = 'none';
+      if (!document.getElementById('mgmtDoneBtn')) {
+        const doneBtn = document.createElement('button');
+        doneBtn.id = 'mgmtDoneBtn';
+        doneBtn.className = 'drawer-mgmt-btn';
+        doneBtn.textContent = '完成';
+        doneBtn.addEventListener('click', toggleManageMode);
+        document.querySelector('.drawer-header').insertBefore(doneBtn, document.querySelector('.drawer-header strong'));
+      }
+    } else {
+      $('closeHistory').style.display = '';
+      const doneBtn = document.getElementById('mgmtDoneBtn');
+      if (doneBtn) doneBtn.remove();
+      selectedItems.clear();
+      updateCheckStates();
+    }
+    // 动态注入复选框到所有历史项
+    document.querySelectorAll('.history-item').forEach(injectCheckbox);
+  }
+
+  function injectCheckbox(item) {
+    if (item.querySelector('.mgmt-check')) return;
+    // 注入置顶标志
+    if (!item.querySelector('.h-pin-badge')) {
+      const badge = document.createElement('span');
+      badge.className = 'h-pin-badge';
+      badge.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V2h8v4M6 4h4M8 2v12"/></svg>';
+      const avatar = item.querySelector('.h-avatar');
+      if (avatar) avatar.parentNode.insertBefore(badge, avatar);
+    }
+    const chk = document.createElement('span');
+    chk.className = 'mgmt-check';
+    chk.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><polyline points="3 8 7 12 13 5"/></svg>';
+    chk.addEventListener('click', e => {
+      e.stopPropagation();
+      const id = item.dataset.historyId;
+      if (selectedItems.has(id)) { selectedItems.delete(id); chk.classList.remove('checked'); }
+      else { selectedItems.add(id); chk.classList.add('checked'); }
+    });
+    item.insertBefore(chk, item.firstChild);
+  }
+
+  function updateCheckStates() {
+    document.querySelectorAll('.history-item .mgmt-check').forEach(chk => {
+      chk.classList.toggle('checked', selectedItems.has(chk.closest('.history-item').dataset.historyId));
+    });
+  }
+
+  // 初始化历史项：给所有 history-item 分配唯一ID
+  function initHistoryItemIds() {
+    document.querySelectorAll('#historyList .history-item').forEach((item, i) => {
+      if (!item.dataset.historyId) item.dataset.historyId = 'h_' + i;
+    });
+  }
+  initHistoryItemIds();
+  // 给所有历史项注入置顶标志
+  document.querySelectorAll('#chatGroupBody .history-item').forEach(item => {
+    if (!item.querySelector('.h-pin-badge')) {
+      const badge = document.createElement('span');
+      badge.className = 'h-pin-badge';
+      badge.innerHTML = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6V2h8v4M6 4h4M8 2v12"/></svg>';
+      const avatar = item.querySelector('.h-avatar');
+      if (avatar) avatar.parentNode.insertBefore(badge, avatar);
+    }
+  });
+
+  // 单条管理：长按弹出操作菜单
+  let currentActionItem = null;
+  let actionSheetOpen = false;
+
+  function openActionSheet(item) {
+    currentActionItem = item;
+    if (!document.getElementById('itemActionOverlay')) {
+      const overlay = document.createElement('div');
+      overlay.id = 'itemActionOverlay';
+      overlay.className = 'item-actions-overlay';
+      overlay.innerHTML = `
+        <div class="item-action-sheet" id="itemActionSheet">
+          <div class="ias-header">
+            <strong>${item.querySelector('.h-info strong')?.textContent || '操作'}</strong>
+            <button class="ias-done" id="iasDone">完成</button>
+          </div>
+          <div class="ias-items">
+          <button class="ias-item" data-act="pin">置顶</button>
+          <button class="ias-item" data-act="rename">重命名</button>
+          <button class="ias-item" data-act="export">导出</button>
+          <button class="ias-item danger" data-act="delete">删除</button>
+          </div>
+          <button class="ias-cancel" id="iasCancel">取消</button>
+        </div>
+      `;
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay || e.target.closest('.ias-cancel') || e.target.closest('.ias-done')) closeActionSheet();
+      });
+      overlay.querySelector('.item-action-sheet').addEventListener('click', e => {
+        const act = e.target.closest('.ias-item')?.dataset.act;
+        if (act) { handleAction(act); closeActionSheet(); }
+      });
+      $('historyDrawer').appendChild(overlay);
+    } else {
+      const overlay = document.getElementById('itemActionOverlay');
+      overlay.querySelector('.ias-header strong').textContent = item.querySelector('.h-info strong')?.textContent || '操作';
+    }
+    document.getElementById('itemActionOverlay').classList.add('show');
+    setTimeout(() => document.getElementById('itemActionSheet').classList.add('open'), 10);
+    actionSheetOpen = true;
+  }
+
+  function closeActionSheet() {
+    const ov = document.getElementById('itemActionOverlay');
+    if (ov) { ov.classList.remove('show'); document.getElementById('itemActionSheet').classList.remove('open'); }
+    actionSheetOpen = false;
+    currentActionItem = null;
+  }
+
+  function handleAction(act) {
+    if (!currentActionItem) return;
+    const name = currentActionItem.querySelector('.h-info strong')?.textContent || '';
+    const info = currentActionItem.querySelector('.h-info span')?.textContent || '';
+    switch (act) {
+      case 'pin':
+        const badge = currentActionItem.querySelector('.h-pin-badge');
+        if (badge && badge.classList.contains('show')) {
+          badge.classList.remove('show');
+        } else {
+          const parent = currentActionItem.parentElement;
+          if (badge) badge.classList.add('show');
+          // 移到列表最前
+          const first = parent.querySelector('.history-group-label');
+          if (first) parent.insertBefore(currentActionItem, first.nextSibling);
+          else parent.insertBefore(currentActionItem, parent.firstChild);
+        }
+        break;
+      case 'rename':
+        const newName = prompt('重命名会话', name);
+        if (newName && newName.trim()) {
+          currentActionItem.querySelector('.h-info strong').textContent = newName.trim();
+          currentActionItem.dataset.title = newName.trim();
+        }
+        break;
+      case 'delete':
+        if (confirm(`确定要删除「${name}」吗？`)) {
+          currentActionItem.style.transition = 'opacity .2s';
+          currentActionItem.style.opacity = '0';
+          setTimeout(() => currentActionItem.remove(), 200);
+        }
+        break;
+      case 'export':
+        alert(`已导出会话「${name}」`);
+        break;
+    }
+  }
+
+  // 批量删除
+  $('mgmtDelBtn').addEventListener('click', () => {
+    if (!selectedItems.size) return;
+    if (confirm(`确定删除选中的 ${selectedItems.size} 个会话吗？`)) {
+      selectedItems.forEach(id => {
+        const item = document.querySelector(`[data-history-id="${id}"]`);
+        if (item) item.remove();
+      });
+      selectedItems.clear();
+      toggleManageMode();
+    }
+  });
+
+  // 批量置顶
+  $('mgmtPinBtn').addEventListener('click', () => {
+    if (!selectedItems.size) return;
+    const firstParent = document.querySelector('#chatGroupBody') || document.querySelector('#historyList');
+    selectedItems.forEach(id => {
+      const item = document.querySelector(`[data-history-id="${id}"]`);
+      if (item) firstParent.insertBefore(item, firstParent.firstChild);
+    });
+    selectedItems.clear();
+    toggleManageMode();
+  });
+
+  // 历史项长按/右键 → 弹出操作菜单
+  document.querySelector('#historyList').addEventListener('contextmenu', e => {
+    e.preventDefault();
+    const item = e.target.closest('.history-item');
+    if (item && !manageMode) openActionSheet(item);
+  });
+
+  // 在管理模式中点击历史项 → 选中/取消
+  document.querySelector('#historyList').addEventListener('click', e => {
+    if (!manageMode) return;
+    const item = e.target.closest('.history-item');
+    const chk = e.target.closest('.mgmt-check');
+    if (chk) return; // checkbox 自己处理
+    if (item) {
+      const id = item.dataset.historyId;
+      const chkEl = item.querySelector('.mgmt-check');
+      if (selectedItems.has(id)) {
+        selectedItems.delete(id);
+        chkEl.classList.remove('checked');
+      } else {
+        selectedItems.add(id);
+        chkEl.classList.add('checked');
+      }
+    }
+  });
+
   const overlay = $('overlay');
   function closeAll() {
     $('historyDrawer').classList.remove('open');
     overlay.classList.remove('show');
   }
+
+  // 非管理模式：长按弹出菜单（touch事件模拟）
+  let longPressTimer;
+  document.querySelector('#historyList').addEventListener('touchstart', e => {
+    const item = e.target.closest('.history-item');
+    if (!item || manageMode) return;
+    longPressTimer = setTimeout(() => openActionSheet(item), 500);
+  }, { passive: true });
+  document.querySelector('#historyList').addEventListener('touchend', () => clearTimeout(longPressTimer));
+  document.querySelector('#historyList').addEventListener('touchmove', () => clearTimeout(longPressTimer));
+  // 历史项的三点按钮 → 弹出操作菜单
+  document.querySelector('#historyList').addEventListener('click', e => {
+    if (manageMode) return;
+    const dots = e.target.closest('.h-dots');
+    if (dots) {
+      e.stopPropagation();
+      openActionSheet(dots.closest('.history-item'));
+      return;
+    }
+  });
   $('openHistory').addEventListener('click', () => { $('historyDrawer').classList.add('open'); overlay.classList.add('show'); });
   $('closeHistory').addEventListener('click', closeAll);
   overlay.addEventListener('click', closeAll);
@@ -1197,8 +1838,24 @@
       const msg = item.querySelector('.h-info span').textContent.toLowerCase() || '';
       item.style.display = (title.includes(q) || msg.includes(q)) ? '' : 'none';
     });
-    document.querySelectorAll('.history-group-label').forEach(l => l.style.display = q ? 'none' : '');
+    document.querySelectorAll('.group-head').forEach(l => l.style.display = q ? 'none' : '');
   });
+  // ═══ 侧边栏多功能区：分组展开/折叠 + 新建入口 ═══
+  // 分组标题点击折叠（点击 + 按钮时不折叠）
+  [['taskGroupHead','taskGroupBody'], ['chatGroupHead','chatGroupBody']].forEach(([h]) => {
+    $(h).addEventListener('click', e => {
+      if (e.target.closest('.gh-add') || e.target.closest('.gh-arrow') || e.target.closest('.gh-more')) return;
+      $(h).classList.toggle('collapsed');
+    });
+  });
+  // 新建会话：抽屉头部 + / 历史会话分组 +
+  function newChatFromSidebar(e) {
+    if (e) e.stopPropagation();
+    closeAll();
+    gotoHomeAsNewChat();
+  }
+  $('drawerNewChat').addEventListener('click', newChatFromSidebar);
+  $('sidebarNewChat').addEventListener('click', newChatFromSidebar);
   // 输入框自动高度调整
   const autoResizeTextarea = (textarea) => {
     textarea.style.height = 'auto';
@@ -1268,6 +1925,27 @@
     const c = tasks.length;
     const pc = document.getElementById('profileTaskCount');
     if (pc) pc.textContent = c ? `已设置 ${c} 个定时任务` : '定时执行图纸分析/仿真/报告生成';
+    // 同步侧边栏定时任务分组
+    const sb = document.getElementById('sidebarTaskList');
+    if (sb) {
+      sb.innerHTML = tasks.map((t,i) => `
+        <div class="history-item" data-title="定时任务" data-task-dyn="${i}" data-msg="${t.content || t.name}">
+          
+          <div class="h-info"><strong>${t.name}</strong><span>${t.freq} ${t.time} · ${t.agent} · 新建</span></div>
+          <span class="h-time">刚刚</span>
+        </div>
+      `).join('');
+      sb.querySelectorAll('.history-item').forEach(item => {
+        item.addEventListener('click', () => {
+          const idx = parseInt(item.dataset.taskDyn);
+          closeAll();
+          isTabSwitch = false;
+          showScreen('task');
+          openTaskDetail(idx);
+        });
+      });
+    }
+    initHistoryItemIds();
   }
   function bindTaskForm() {
     taskFreq = '每天';
@@ -1296,8 +1974,64 @@
       });
     }
   }
-  // 我的页面 → 打开定时任务智能体
-  $('profileTaskEntry').addEventListener('click', () => openChat('定时任务', ''));
+  // 我的页面 → 打开定时任务管理
+  $('profileTaskEntry').addEventListener('click', () => { closeAll(); openTaskScreen(); });
+  // ═══ 对话过程中：把已完成任务「设为定时任务」 ═══
+  const taskSheet = $('taskSheet');
+  const taskSheetOverlay = $('taskSheetOverlay');
+  let sheetTaskFreq = '每天';
+  function openTaskSheet(ctx) {
+    $('sheetTaskName').value = ctx.name || '';
+    const sel = $('sheetTaskAgent');
+    if (ctx.agent && [...sel.options].some(o => o.value === ctx.agent)) sel.value = ctx.agent;
+    else sel.value = 'MetaLLM';
+    $('sheetTaskContent').value = ctx.content || '';
+    sheetTaskFreq = '每天';
+    $('sheetFreqRow').querySelectorAll('.freq-opt').forEach((b, i) => b.classList.toggle('active', i === 0));
+    $('sheetTaskTime').value = '09:00';
+    $('sheetTaskTime').closest('.field').style.display = '';
+    taskSheet.classList.add('open');
+    taskSheetOverlay.classList.add('show');
+  }
+  function closeTaskSheet() {
+    taskSheet.classList.remove('open');
+    taskSheetOverlay.classList.remove('show');
+  }
+  $('sheetFreqRow').querySelectorAll('.freq-opt').forEach(btn =>
+    btn.addEventListener('click', () => {
+      $('sheetFreqRow').querySelectorAll('.freq-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      sheetTaskFreq = btn.dataset.freq;
+      $('sheetTaskTime').closest('.field').style.display = sheetTaskFreq === '手动触发' ? 'none' : '';
+    })
+  );
+  $('taskSheetClose').addEventListener('click', closeTaskSheet);
+  taskSheetOverlay.addEventListener('click', closeTaskSheet);
+  $('sheetSubmitTask').addEventListener('click', () => {
+    const name = $('sheetTaskName').value.trim();
+    if (!name) { $('sheetTaskName').focus(); return; }
+    const agent = $('sheetTaskAgent').value;
+    const time = sheetTaskFreq === '手动触发' ? '--' : ($('sheetTaskTime').value || '09:00');
+    const content = $('sheetTaskContent').value.trim();
+    tasks.unshift({ name, agent, freq: sheetTaskFreq, time, content });
+    renderTasks();
+    closeTaskSheet();
+    const chatBody = $('chatBody');
+    if (chatBody && screens.chat.classList.contains('active')) {
+      chatBody.innerHTML += `<div class="task-created-tip">✓ 已设为定时任务：<strong>${name}</strong> · ${sheetTaskFreq} ${time}（可在「我的 → 定时任务」中查看与管理）</div>`;
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+  });
+  // 对话气泡下方「设为定时任务」按钮（事件委托）
+  $('chatBody').addEventListener('click', e => {
+    const btn = e.target.closest('.set-task-btn');
+    if (!btn) return;
+    const agent = btn.dataset.agent || '';
+    const content = decodeURIComponent(btn.dataset.content || '');
+    const base = content || agent;
+    const name = base.length > 14 ? base.slice(0, 14) + '…' : (base || '定时任务');
+    openTaskSheet({ name, agent, content });
+  });
   // 输入框 + 号 → 打开添加菜单
   let attachContext = 'home';
   const attachSheet = $('attachSheet');
@@ -1306,6 +2040,7 @@
     attachContext = ctx;
     attachSheet.classList.add('open');
     attachSheetOverlay.classList.add('show');
+    syncAttachTaskActive();
   }
   function closeAttachSheet() {
     attachSheet.classList.remove('open');
@@ -1314,14 +2049,26 @@
   $('homeAttachBtn').addEventListener('click', () => openAttachSheet('home'));
   $('chatAttachBtn').addEventListener('click', () => openAttachSheet('chat'));
   attachSheetOverlay.addEventListener('click', closeAttachSheet);
-  // 选择"定时任务" → 在对应输入框显示定时任务标签
+  // 选择"定时任务" → 在对应输入框显示定时任务标签，并把菜单项高亮为绿色
   $('attachTaskItem').addEventListener('click', () => {
     const tag = attachContext === 'chat' ? $('chatTaskTag') : $('homeTaskTag');
-    tag.classList.add('show');
+    const active = tag.classList.toggle('show');
+    $('attachTaskItem').classList.toggle('active', active);
     closeAttachSheet();
   });
-  $('homeTaskTagClose').addEventListener('click', () => $('homeTaskTag').classList.remove('show'));
-  $('chatTaskTagClose').addEventListener('click', () => $('chatTaskTag').classList.remove('show'));
+  $('homeTaskTagClose').addEventListener('click', () => {
+    $('homeTaskTag').classList.remove('show');
+    $('attachTaskItem').classList.remove('active');
+  });
+  $('chatTaskTagClose').addEventListener('click', () => {
+    $('chatTaskTag').classList.remove('show');
+    $('attachTaskItem').classList.remove('active');
+  });
+  // 打开 + 菜单时，根据当前输入框是否已开启定时任务同步绿色高亮状态
+  function syncAttachTaskActive() {
+    const tag = attachContext === 'chat' ? $('chatTaskTag') : $('homeTaskTag');
+    $('attachTaskItem').classList.toggle('active', tag.classList.contains('show'));
+  }
   // 模型名 → 点击弹出底部选择面板
   const MODELS = [
     { name:'Auto', tags:['推理','视觉'], credits:'x0.40 credits', color:'#1db96a',
@@ -1381,6 +2128,512 @@
   $('modelList').addEventListener('click', e => {
     const row = e.target.closest('.model-row');
     if (row) selectModel(row.dataset.model);
+  });
+
+  // ══════════════════════════════════════════
+  // 定时任务管理页面 (Task Screen)
+  // ══════════════════════════════════════════
+
+  // 预置的定时任务 + 执行历史 Mock 数据
+  const TASK_MOCKS = [
+    { name:'每日图纸自动分析', agent:'工程图纸分析', freq:'每天', time:'09:00', content:'每日自动分析当日上传的所有工程图纸，提取关键尺寸、公差标注、材料要求，并生成公差汇总报告。', active:true },
+    { name:'每周仿真报告生成',  agent:'联动仿真',     freq:'每周', time:'08:00', content:'每周一自动汇总过去一周的仿真结果，生成包含稳态/瞬态分析的周度仿真报告，并导出为PDF。', active:true },
+    { name:'每月产线良率汇总', agent:'Excel 表格助手', freq:'每月', time:'10:00', content:'每月1日自动统计产线良率数据，生成月度良率分析报告，包含趋势图和异常工位标记。', active:false },
+  ];
+
+  const HISTORY_MOCKS = {
+    '每日图纸自动分析': [
+      { status:'ok', time:'2026-06-01 09:00', summary:'本次分析处理12张图纸，提取尺寸47项，检测到3处公差超限，已生成汇总报告。', detail:'执行详情：\n• 处理图纸：齿轮图纸×5、轴类图纸×4、壳体图纸×3\n• 提取尺寸：47项关键尺寸\n• 公差检测：3项超限（壳体壁厚-0.03mm、轴径+0.015mm、齿顶圆+0.025mm）\n• 材料验证：全部符合设计要求\n• 输出文件：/reports/tolerance_2026-06-01.pdf' },
+      { status:'ok', time:'2026-05-31 09:00', summary:'处理9张图纸，全部尺寸在公差范围内，无异常。', detail:'执行详情：\n• 处理图纸：9张\n• 全部尺寸合格\n• 无异常标记' },
+      { status:'fail', time:'2026-05-30 09:00', summary:'执行失败：图纸服务器连接超时，请检查网络或数据源配置。', detail:'错误详情：\n• 错误类型：ConnectionTimeout\n• 目标服务器：drawing-server.internal:8080\n• 超时时间：30秒\n• 建议：检查服务器状态或联系IT管理员' },
+      { status:'ok', time:'2026-05-29 09:00', summary:'处理15张图纸，发现1处材料标注不明确，已标记待人工确认。', detail:'执行详情：\n• 处理图纸：15张\n• 发现问题：齿轮图纸#G-2026-042材料栏标注为"合金钢"，缺少具体牌号\n• 已标记待确认' },
+      { status:'ok', time:'2026-05-28 09:00', summary:'处理11张图纸，全部正常，报告已归档。', detail:'执行详情：\n• 处理图纸：11张\n• 全部正常\n• 报告归档完成' },
+    ],
+    '每周仿真报告生成': [
+      { status:'ok', time:'2026-05-26 08:00', summary:'汇总了过去一周共8组仿真数据，生成周报PDF，包含稳态/瞬态分析对比图。', detail:'执行详情：\n• 仿真组数：8组（3组稳态 + 5组瞬态）\n• 关键指标：最大应力下降2.3%，振动频率优化0.8%\n• 输出文件：/reports/sim_weekly_2026-05-26.pdf（18页）' },
+      { status:'ok', time:'2026-05-19 08:00', summary:'汇总6组仿真数据，叶轮仿真效率提升1.5%方案验证通过。', detail:'执行详情：\n• 仿真组数：6组\n• 重点成果：叶轮叶片角度优化方案验证通过\n• 效率提升：1.5%' },
+      { status:'running', time:'2026-06-01 08:00', summary:'正在执行中...已完成2/8组仿真数据汇总。', detail:'执行中：\n• 当前进度：2/8组\n• 预计完成时间：约15分钟后\n• 当前处理：稳态流体仿真结果分析' },
+    ],
+    '每月产线良率汇总': [
+      { status:'ok', time:'2026-05-01 10:00', summary:'4月良率统计完成：产线良率95.8%（环比+0.6%），异常工位2个已标记。', detail:'执行详情：\n• 统计周期：2026年4月\n• 产线良率：95.8%（环比+0.6%）\n• 异常工位：冲压#3站（模具磨损）、检测#1站（传感器校准偏移）\n• 输出文件：/reports/yield_2026-04.xlsx' },
+      { status:'ok', time:'2026-04-01 10:00', summary:'3月良率统计：95.2%（环比+0.3%），1个异常工位已修复。', detail:'执行详情：\n• 统计周期：2026年3月\n• 产线良率：95.2%\n• 异常工位已修复' },
+    ]
+  };
+
+  // 为 tasks 数组中的用户自建任务生成空历史
+  function ensureHistory(name) {
+    if (!HISTORY_MOCKS[name]) HISTORY_MOCKS[name] = [];
+  }
+
+  // 获取所有任务（预置 + 用户自建）
+  function getAllTasks() {
+    const mocks = TASK_MOCKS.map(t => ({...t, isMock:true}));
+    const userTasks = tasks.map(t => ({...t, isMock:false, active:true}));
+    return [...mocks, ...userTasks];
+  }
+
+  // 打开任务管理屏幕（列表视图）
+  function openTaskScreen() {
+    isTabSwitch = false;
+    showScreen('task');
+    $('taskMainView').classList.add('active');
+    $('taskDetailView').classList.remove('active');
+    $('taskFormView').classList.remove('active');
+    renderTaskList();
+  }
+
+  // 渲染任务列表
+  function renderTaskList() {
+    const all = getAllTasks();
+    const body = $('taskBody');
+    if (!all.length) {
+      body.innerHTML = `
+        <div class="tsk-empty">
+          <div class="tsk-empty-icon">⏰</div>
+          <p>还没有定时任务</p>
+          <p style="font-size:11px;color:var(--muted)">创建一个定时任务来自动执行<br>图纸分析、仿真、报表生成等操作</p>
+          <button class="tsk-create-btn" id="tskEmptyCreate">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            新建定时任务
+          </button>
+        </div>
+      `;
+      $('tskEmptyCreate').addEventListener('click', openTaskForm);
+      return;
+    }
+    body.innerHTML = all.map((t, i) => {
+      return `
+        <button class="tsk-list-item" data-task-idx="${i}" data-is-mock="${t.isMock}" data-task-name="${t.name}">
+          <div class="tsk-list-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+          </div>
+          <div class="tsk-list-info">
+            <strong>${t.name}</strong>
+            <span>${t.freq === '手动触发' ? '手动触发' : (t.freq + ' ' + t.time)} · ${t.agent} · ${t.isMock ? '已执行 ' + (HISTORY_MOCKS[t.name]?.length || 0) + ' 次' : '新建'}</span>
+          </div>
+          <span class="tsk-list-dots" data-task-idx="${i}" data-is-mock="${t.isMock}" data-task-name="${t.name}">⋯</span>
+        </button>
+      `;
+    }).join('');
+
+    body.querySelectorAll('.tsk-list-item').forEach(item => {
+      item.addEventListener('click', e => {
+        if (e.target.closest('.tsk-list-dots')) return;
+        const idx = parseInt(item.dataset.taskIdx);
+        const isMock = item.dataset.isMock === 'true';
+        const name = item.dataset.taskName;
+        if (isMock) {
+          const mockTask = TASK_MOCKS.find(t => t.name === name);
+          openTaskDetail(-1, mockTask);
+        } else {
+          const userIdx = idx - TASK_MOCKS.length;
+          openTaskDetail(userIdx);
+        }
+      });
+    });
+
+    // 三点按钮 → 任务操作菜单
+    body.querySelectorAll('.tsk-list-dots').forEach(dots => {
+      dots.addEventListener('click', e => {
+        e.stopPropagation();
+        openTaskActionSheet(dots);
+      });
+    });
+  }
+
+  // 任务操作菜单
+  function openTaskActionSheet(dotsBtn) {
+    const idx = parseInt(dotsBtn.dataset.taskIdx);
+    const isMock = dotsBtn.dataset.isMock === 'true';
+    const name = dotsBtn.dataset.taskName;
+    let taskData;
+    if (isMock) {
+      taskData = TASK_MOCKS.find(t => t.name === name);
+    } else {
+      const userIdx = idx - TASK_MOCKS.length;
+      taskData = tasks[userIdx];
+    }
+    if (!taskData) return;
+
+    if (!document.getElementById('taskActionOverlay')) {
+      const overlay = document.createElement('div');
+      overlay.id = 'taskActionOverlay';
+      overlay.className = 'item-actions-overlay';
+      overlay.addEventListener('click', e => {
+        if (e.target === overlay || e.target.closest('.ias-cancel') || e.target.closest('.ias-done')) {
+          overlay.classList.remove('show');
+          document.getElementById('taskActionSheet').classList.remove('open');
+        }
+      });
+      overlay.innerHTML = `
+        <div class="item-action-sheet" id="taskActionSheet">
+          <div class="ias-header">
+            <strong id="taskActionTitle">${name}</strong>
+            <button class="ias-done" id="taskActionDone">完成</button>
+          </div>
+          <div class="ias-items">
+            <button class="ias-item" data-ta="edit">编辑</button>
+            <button class="ias-item" data-ta="test">测试运行</button>
+            <button class="ias-item" data-ta="toggle">${taskData.active ? '暂停' : '启用'}</button>
+            <button class="ias-item danger" data-ta="delete">删除</button>
+          </div>
+          <button class="ias-cancel" id="taskActionCancel">取消</button>
+        </div>
+      `;
+      $('taskScreen').appendChild(overlay);
+      overlay.querySelector('.ias-items').addEventListener('click', e => {
+        const act = e.target.closest('.ias-item')?.dataset.ta;
+        if (!act) return;
+        handleTaskAction(act, idx, isMock, name, taskData);
+        overlay.classList.remove('show');
+        document.getElementById('taskActionSheet').classList.remove('open');
+      });
+    } else {
+      document.getElementById('taskActionTitle').textContent = name;
+      const toggleBtn = document.querySelector('#taskActionOverlay .ias-item[data-ta="toggle"]');
+      if (toggleBtn) toggleBtn.textContent = taskData.active ? '暂停' : '启用';
+    }
+    document.getElementById('taskActionOverlay').classList.add('show');
+    setTimeout(() => document.getElementById('taskActionSheet').classList.add('open'), 10);
+  }
+
+  function handleTaskAction(act, idx, isMock, name, taskData) {
+    switch (act) {
+      case 'edit':
+        if (isMock) { openTaskForm(-1, true, name); }
+        else { const i = tasks.indexOf(taskData); openTaskForm(i, false); }
+        break;
+      case 'test':
+        const mockName = isMock ? name : taskData.name;
+        if (!HISTORY_MOCKS[mockName]) HISTORY_MOCKS[mockName] = [];
+        HISTORY_MOCKS[mockName].unshift({
+          status: 'running', time: new Date().toISOString().replace('T',' ').slice(0,16),
+          summary: '测试运行中...', detail: '测试运行：\n• 已提交测试执行\n• 预计耗时：1-3分钟'
+        });
+        if (isMock) {
+          const mt = TASK_MOCKS.find(t => t.name === name);
+          if (mt) openTaskDetail(-1, mt);
+        } else {
+          const i = tasks.indexOf(taskData);
+          openTaskDetail(i);
+        }
+        break;
+      case 'toggle':
+        taskData.active = !taskData.active;
+        if (isMock) { const mt = TASK_MOCKS.find(t => t.name === name); if (mt) mt.active = taskData.active; }
+        renderTaskList();
+        break;
+      case 'delete':
+        if (isMock) {
+          const mi = TASK_MOCKS.findIndex(t => t.name === name);
+          if (mi >= 0) TASK_MOCKS.splice(mi, 1);
+        } else {
+          const i = tasks.indexOf(taskData);
+          if (i >= 0) tasks.splice(i, 1);
+        }
+        renderTasks();
+        renderTaskList();
+        break;
+    }
+  }
+
+  // 当前查看的任务引用
+  let currentDetailTask = null;
+  let currentDetailIsMock = false;
+  let currentDetailMockName = '';
+
+  // 打开任务执行历史详情
+  function openTaskDetail(idx, mockTask) {
+    if (mockTask) {
+      currentDetailTask = mockTask;
+      currentDetailIsMock = true;
+      currentDetailMockName = mockTask.name;
+    } else {
+      if (idx < 0 || idx >= tasks.length) return;
+      currentDetailTask = tasks[idx];
+      currentDetailIsMock = false;
+      currentDetailMockName = currentDetailTask.name;
+    }
+
+    ensureHistory(currentDetailMockName);
+
+    $('taskMainView').classList.remove('active');
+    $('taskDetailView').classList.add('active');
+    $('taskFormView').classList.remove('active');
+
+    renderTaskDetail();
+  }
+
+  // 渲染任务详情 + 执行历史
+  function renderTaskDetail() {
+    const t = currentDetailTask;
+    if (!t) return;
+
+    $('taskDetailTitle').textContent = t.name;
+
+    const freqIcon = t.freq === '每天' ? '☀' : t.freq === '小时' ? '🕐' : t.freq === '工作日' ? '💼' : t.freq === '每周' ? '📅' : t.freq === '每月' ? '📆' : '👆';
+    const freqDisplay = t.freq === '手动触发' ? '手动触发' : (freqIcon + ' ' + t.freq + ' ' + t.time);
+    const activeLabel = t.active ? '运行中' : '已暂停';
+    const activeCls = t.active ? 'green' : 'amber';
+    const histories = HISTORY_MOCKS[currentDetailMockName] || [];
+
+    $('taskDetailBody').innerHTML = `
+      <div class="td-info-card">
+        <div class="td-info-head">
+          <div class="td-info-icon">⏰</div>
+          <div>
+            <div class="td-info-name">${t.name}</div>
+            <span class="td-info-agent">${t.agent}</span>
+          </div>
+        </div>
+        <p style="font-size:11.5px;color:var(--text2);line-height:1.6;margin-bottom:12px">${t.content || '暂无描述'}</p>
+        <div class="td-info-row">
+          <div class="td-info-field"><div class="td-label">执行频率</div><div class="td-value">${freqDisplay}</div></div>
+          <div class="td-info-field"><div class="td-label">执行助手</div><div class="td-value">${t.agent}</div></div>
+          <div class="td-info-field"><div class="td-label">任务状态</div><div class="td-value" style="color:var(--green)">${activeLabel}</div></div>
+          <div class="td-info-field"><div class="td-label">执行次数</div><div class="td-value">${histories.length} 次</div></div>
+        </div>
+      </div>
+      <div class="tsk-section-label">执行历史</div>
+      <div class="th-list" id="thList">
+        ${histories.length ? histories.map((h, i) => `
+          <div class="th-item" data-hidx="${i}">
+            <div class="th-status ${h.status==='ok'?'th-ok':h.status==='fail'?'th-fail':'th-running'}">${h.status==='ok'?'✓':h.status==='fail'?'!':'⋯'}</div>
+            <div class="th-info">
+              <strong>${t.name}</strong>
+              <div class="th-summary">${h.summary}</div>
+              <div class="th-time">${h.time}</div>
+              <div class="th-detail">${h.detail ? h.detail.replace(/\n/g, '<br>') : '暂无详细信息'}</div>
+            </div>
+          </div>
+        `).join('') : '<div class="tsk-empty" style="padding:24px"><p style="font-size:11px">暂无执行记录</p></div>'}
+      </div>
+    `;
+
+    // 展开/收起历史详情
+    $('taskDetailBody').querySelectorAll('.th-item').forEach(item => {
+      item.addEventListener('click', () => item.classList.toggle('expanded'));
+    });
+
+    // 底部按钮状态
+    $('tdToggleActive').innerHTML = t.active
+      ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9l6 6M15 9l-6 6"/></svg>暂停`
+      : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="3"/><polyline points="9 12 11 14 15 10"/></svg>启用`;
+    $('tdToggleActive').classList.toggle('primary', !t.active);
+  }
+
+  // 打开新建/编辑任务表单
+  let editTaskIdx = -1;
+  let editIsMock = false;
+  function openTaskForm(idx, isMock, mockName) {
+    editTaskIdx = idx !== undefined ? idx : -1;
+    editIsMock = isMock || false;
+
+    $('taskMainView').classList.remove('active');
+    $('taskDetailView').classList.remove('active');
+    $('taskFormView').classList.add('active');
+
+    if (idx >= 0) {
+      const taskData = isMock ? TASK_MOCKS.find(t => t.name === mockName) : tasks[idx];
+      if (taskData) {
+        $('tfTaskName').value = taskData.name;
+        $('tfTaskAgent').value = taskData.agent;
+        $('tfTaskTime').value = taskData.time;
+        $('tfTaskContent').value = taskData.content || '';
+        $('tfFreqRow').querySelectorAll('.freq-opt').forEach(b => b.classList.toggle('active', b.dataset.freq === taskData.freq));
+        tfFreq = taskData.freq;
+        $('tfTaskTime').closest('.field').style.display = tfFreq === '手动触发' ? 'none' : '';
+        $('taskFormTitle').textContent = '编辑定时任务';
+        $('tfConfirmBtn').textContent = '保存修改';
+      }
+    } else {
+      $('tfTaskName').value = '';
+      $('tfTaskAgent').value = 'MetaLLM';
+      $('tfTaskTime').value = '09:00';
+      $('tfTaskContent').value = '';
+      $('tfFreqRow').querySelectorAll('.freq-opt').forEach((b, i) => b.classList.toggle('active', i === 0));
+      tfFreq = '每天';
+      $('tfTaskTime').closest('.field').style.display = '';
+      $('taskFormTitle').textContent = '新建定时任务';
+      $('tfConfirmBtn').textContent = '创建任务';
+    }
+  }
+
+  // 表单频率选择
+  let tfFreq = '每天';
+  $('tfFreqRow').querySelectorAll('.freq-opt').forEach(btn =>
+    btn.addEventListener('click', () => {
+      $('tfFreqRow').querySelectorAll('.freq-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      tfFreq = btn.dataset.freq;
+      // 手动触发时隐藏时间选择
+      $('tfTaskTime').closest('.field').style.display = tfFreq === '手动触发' ? 'none' : '';
+    })
+  );
+
+  // 表单提交
+  $('tfConfirmBtn').addEventListener('click', () => {
+    const name = $('tfTaskName').value.trim();
+    if (!name) { $('tfTaskName').focus(); return; }
+    const agent = $('tfTaskAgent').value;
+    const time = tfFreq === '手动触发' ? '--' : ($('tfTaskTime').value || '09:00');
+    const content = $('tfTaskContent').value.trim();
+
+    if (editTaskIdx >= 0) {
+      // 编辑模式
+      if (editIsMock) {
+        // 将 mock 转为用户任务
+        tasks.unshift({ name, agent, freq: tfFreq, time, content, active: true });
+      } else {
+        tasks[editTaskIdx] = { name, agent, freq: tfFreq, time, content, active: tasks[editTaskIdx].active };
+      }
+    } else {
+      // 新建
+      tasks.unshift({ name, agent, freq: tfFreq, time, content, active: true });
+      ensureHistory(name);
+    }
+
+    renderTasks();
+    renderTaskList();
+
+    // 返回到列表视图
+    $('taskFormView').classList.remove('active');
+    $('taskMainView').classList.add('active');
+  });
+
+  $('tfCancelBtn').addEventListener('click', () => {
+    $('taskFormView').classList.remove('active');
+    $('taskMainView').classList.add('active');
+    renderTaskList();
+  });
+
+  // ═══ 导航按钮事件 ═══
+  // 从列表返回上一页
+  $('taskBackBtn').addEventListener('click', () => {
+    closeAll();
+    showScreen(prevScreen === 'task' ? 'home' : prevScreen, true);
+  });
+
+  // 从详情返回列表
+  $('taskDetailBackBtn').addEventListener('click', () => {
+    $('taskDetailView').classList.remove('active');
+    $('taskFormView').classList.remove('active');
+    $('taskMainView').classList.add('active');
+  });
+
+  // 从表单返回
+  $('taskFormBackBtn').addEventListener('click', () => {
+    $('taskFormView').classList.remove('active');
+    if (currentDetailTask) {
+      $('taskDetailView').classList.add('active');
+    } else {
+      $('taskMainView').classList.add('active');
+    }
+  });
+
+  // 加号 → 新建任务
+  $('taskAddBtn').addEventListener('click', () => openTaskForm());
+
+  // 对话创建入口 → 返回首页并打开定时任务智能体聊天
+  $('taskChatCreateBtn').addEventListener('click', () => {
+    isTabSwitch = false;
+    showScreen('home');
+    closeAll();
+    // 模拟点击定时任务chip或直接进入聊天
+    $('chatTitle').textContent = '定时任务';
+    $('chatSub').textContent = '智能体已就绪';
+    initChatContent('定时任务');
+    $('chatScreen').classList.add('active');
+    $('chatTaskTag').classList.add('show');
+    showScreen('chat');
+  });
+
+  // 搜索定时任务
+  $('taskSearchBtn').addEventListener('click', () => {
+    const bar = $('taskSearchBar');
+    bar.style.display = bar.style.display === 'none' ? '' : 'none';
+    if (bar.style.display !== 'none') $('taskSearchInput').focus();
+    else { $('taskSearchInput').value = ''; filterTaskList(''); $('taskSearchClear').style.display = 'none'; }
+  });
+
+  $('taskSearchInput').addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    $('taskSearchClear').style.display = q ? '' : 'none';
+    filterTaskList(q);
+  });
+
+  $('taskSearchClear').addEventListener('click', () => {
+    $('taskSearchInput').value = '';
+    $('taskSearchClear').style.display = 'none';
+    filterTaskList('');
+    $('taskSearchInput').focus();
+  });
+
+  function filterTaskList(q) {
+    document.querySelectorAll('#taskBody .tsk-list-item').forEach(item => {
+      const name = item.querySelector('.tsk-list-info strong')?.textContent.toLowerCase() || '';
+      const desc = item.querySelector('.tsk-list-info span')?.textContent.toLowerCase() || '';
+      item.style.display = (!q || name.includes(q) || desc.includes(q)) ? '' : 'none';
+    });
+  }
+
+  // 立即执行
+  $('tdRunNow').addEventListener('click', () => {
+    if (!currentDetailTask) return;
+    if (!HISTORY_MOCKS[currentDetailMockName]) HISTORY_MOCKS[currentDetailMockName] = [];
+    HISTORY_MOCKS[currentDetailMockName].unshift({
+      status: 'running',
+      time: new Date().toISOString().replace('T',' ').slice(0,16),
+      summary: '正在执行中...任务已加入执行队列。',
+      detail: '执行中：\n• 任务已提交至执行队列\n• 预计执行时间：2-5分钟\n• 执行完成后将自动更新状态'
+    });
+    renderTaskDetail();
+  });
+
+  // 编辑任务
+  $('tdEditTask').addEventListener('click', () => {
+    if (!currentDetailTask) return;
+    if (currentDetailIsMock) {
+      openTaskForm(-1, true, currentDetailMockName);
+    } else {
+      const idx = tasks.indexOf(currentDetailTask);
+      openTaskForm(idx, false);
+    }
+  });
+
+  // 启用/暂停切换
+  $('tdToggleActive').addEventListener('click', () => {
+    if (!currentDetailTask) return;
+    currentDetailTask.active = !currentDetailTask.active;
+    if (currentDetailIsMock) {
+      const mock = TASK_MOCKS.find(t => t.name === currentDetailMockName);
+      if (mock) mock.active = currentDetailTask.active;
+    }
+    renderTaskDetail();
+    renderTaskList();
+  });
+
+  // 加号 → 新建定时任务（和历史会话一样）
+  $('sidebarAddTask').addEventListener('click', e => {
+    e.stopPropagation();
+    closeAll();
+    isTabSwitch = false;
+    showScreen('task');
+    $('taskMainView').classList.remove('active');
+    $('taskDetailView').classList.remove('active');
+    $('taskFormView').classList.add('active');
+    openTaskForm();
+  });
+  // 向右箭头 → 进入定时任务管理页
+  $('sidebarTaskArrow').addEventListener('click', e => {
+    e.stopPropagation();
+    closeAll();
+    isTabSwitch = false;
+    showScreen('task');
+    $('taskMainView').classList.add('active');
+    $('taskDetailView').classList.remove('active');
+    $('taskFormView').classList.remove('active');
+    renderTaskList();
   });
 </script>
 </body>
