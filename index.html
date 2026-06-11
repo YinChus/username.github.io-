@@ -673,20 +673,6 @@
     .hr-info{flex:1;min-width:0}
     .hr-info strong{display:block;font-size:12.5px;font-weight:700;color:var(--text);margin-bottom:2px}
     .hr-info span{font-size:10.5px;color:var(--muted)}
-    /* 对话中：任务完成后「设为定时任务」入口 */
-    .post-task-actions{display:flex;justify-content:flex-start;margin:6px 0 2px;padding-left:2px}
-    .set-task-btn{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:7px 13px;border-radius:999px;
-      background:var(--amber-l);border:1px solid rgba(245,163,0,.3);
-      color:var(--amber);font-size:12px;font-weight:600;cursor:pointer;
-    }
-    .set-task-btn svg{width:14px;height:14px;stroke:currentColor;display:block}
-    .task-created-tip{
-      margin:8px 0;padding:9px 12px;border-radius:11px;
-      background:var(--green-l);border:1px solid rgba(29,185,106,.28);
-      color:var(--green);font-size:11.5px;font-weight:600;line-height:1.55;
-    }
     /* chat agent chips above chat input — single row, scrollable */
     .chat-agent-chips{
       display:flex;align-items:center;gap:8px;
@@ -1242,55 +1228,6 @@
       </div>
     </div>
   </aside>
-  <!-- ═══ 设为定时任务 BOTTOM SHEET（对话过程中入口） ═══ -->
-  <div class="sheet-overlay" id="taskSheetOverlay"></div>
-  <aside class="sheet" id="taskSheet">
-    <div class="sheet-grip"></div>
-    <div class="sheet-head">
-      <strong>设为定时任务 <span class="sheet-head-sub">把本次任务设置为周期自动执行</span></strong>
-      <button class="sheet-close" id="taskSheetClose" aria-label="关闭">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
-      </button>
-    </div>
-    <div class="sheet-body">
-      <div class="field">
-        <label>任务名称</label>
-        <input type="text" id="sheetTaskName" placeholder="例如：每日齿轮图纸批量分析" />
-      </div>
-      <div class="field">
-        <label>执行助手</label>
-        <select id="sheetTaskAgent">
-          <option>MetaLLM</option>
-          <option>工程图纸分析</option>
-          <option>三维CAD设计</option>
-          <option>联动仿真</option>
-          <option>Excel 表格助手</option>
-          <option>PPT 演示助手</option>
-          <option>Word 文档助手</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>执行频率</label>
-        <div class="freq-row freq-grid" id="sheetFreqRow">
-          <button class="freq-opt active" data-freq="每天">每天</button>
-          <button class="freq-opt" data-freq="小时">小时</button>
-          <button class="freq-opt" data-freq="工作日">工作日</button>
-          <button class="freq-opt" data-freq="每周">每周</button>
-          <button class="freq-opt" data-freq="每月">每月</button>
-          <button class="freq-opt" data-freq="手动触发">手动触发</button>
-        </div>
-      </div>
-      <div class="field">
-        <label>执行时间</label>
-        <input type="time" id="sheetTaskTime" value="09:00" />
-      </div>
-      <div class="field">
-        <label>任务内容</label>
-        <textarea id="sheetTaskContent" placeholder="描述每次定时执行的具体任务"></textarea>
-      </div>
-      <button class="sheet-submit" id="sheetSubmitTask">创建定时任务</button>
-    </div>
-  </aside>
   <!-- ═══ BOTTOM NAV → 4个：首页、工具箱、发现、我的 -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-target="home">
@@ -1421,12 +1358,21 @@
       <div class="msg-time">▣ ${formatTime()}</div>
     `;
   }
-  function openChat(title, msg) {
+  function openChat(title, msg, skills = null) {
     $('chatTitle').textContent = title;
     $('chatSub').textContent = '';
     closeAll();
     isTabSwitch = false; // 标记为二级页推入
     showScreen('chat');
+    // 恢复技能快照
+    if (skills) {
+      selectedSkills = [...skills];
+    } else {
+      selectedSkills = [];
+      currentHistoryId = null;
+    }
+    renderSelectedSkillTags();
+    syncAttachSkillActive();
     // 初始化聊天内容
     initChatContent(title);
     // 填充输入框默认内容
@@ -1540,13 +1486,6 @@
       // 添加AI回复
       chatBody.innerHTML += `
         ${buildStepCard($('chatTitle').textContent, aiReply.replace(/\n/g, '<br>'))}
-        ${chatTitle.includes('定时任务') ? '' : `
-        <div class="post-task-actions">
-          <button class="set-task-btn" data-agent="${chatTitle}" data-content="${encodeURIComponent(msg)}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7.5V12l3 2"/></svg>
-            设为定时任务
-          </button>
-        </div>`}
         <div class="msg-time">▣ ${aiTime}</div>
       `;
       // 滚动到底部
@@ -2092,62 +2031,6 @@
   }
   // 我的页面 → 打开定时任务管理
   $('profileTaskEntry').addEventListener('click', () => { closeAll(); openTaskScreen(); });
-  // ═══ 对话过程中：把已完成任务「设为定时任务」 ═══
-  const taskSheet = $('taskSheet');
-  const taskSheetOverlay = $('taskSheetOverlay');
-  let sheetTaskFreq = '每天';
-  function openTaskSheet(ctx) {
-    $('sheetTaskName').value = ctx.name || '';
-    const sel = $('sheetTaskAgent');
-    if (ctx.agent && [...sel.options].some(o => o.value === ctx.agent)) sel.value = ctx.agent;
-    else sel.value = 'MetaLLM';
-    $('sheetTaskContent').value = ctx.content || '';
-    sheetTaskFreq = '每天';
-    $('sheetFreqRow').querySelectorAll('.freq-opt').forEach((b, i) => b.classList.toggle('active', i === 0));
-    $('sheetTaskTime').value = '09:00';
-    $('sheetTaskTime').closest('.field').style.display = '';
-    taskSheet.classList.add('open');
-    taskSheetOverlay.classList.add('show');
-  }
-  function closeTaskSheet() {
-    taskSheet.classList.remove('open');
-    taskSheetOverlay.classList.remove('show');
-  }
-  $('sheetFreqRow').querySelectorAll('.freq-opt').forEach(btn =>
-    btn.addEventListener('click', () => {
-      $('sheetFreqRow').querySelectorAll('.freq-opt').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      sheetTaskFreq = btn.dataset.freq;
-      $('sheetTaskTime').closest('.field').style.display = sheetTaskFreq === '手动触发' ? 'none' : '';
-    })
-  );
-  $('taskSheetClose').addEventListener('click', closeTaskSheet);
-  taskSheetOverlay.addEventListener('click', closeTaskSheet);
-  $('sheetSubmitTask').addEventListener('click', () => {
-    const name = $('sheetTaskName').value.trim();
-    if (!name) { $('sheetTaskName').focus(); return; }
-    const agent = $('sheetTaskAgent').value;
-    const time = sheetTaskFreq === '手动触发' ? '--' : ($('sheetTaskTime').value || '09:00');
-    const content = $('sheetTaskContent').value.trim();
-    tasks.unshift({ name, agent, freq: sheetTaskFreq, time, content });
-    renderTasks();
-    closeTaskSheet();
-    const chatBody = $('chatBody');
-    if (chatBody && screens.chat.classList.contains('active')) {
-      chatBody.innerHTML += `<div class="task-created-tip">✓ 已设为定时任务：<strong>${name}</strong> · ${sheetTaskFreq} ${time}（可在「我的 → 定时任务」中查看与管理）</div>`;
-      chatBody.scrollTop = chatBody.scrollHeight;
-    }
-  });
-  // 对话气泡下方「设为定时任务」按钮（事件委托）
-  $('chatBody').addEventListener('click', e => {
-    const btn = e.target.closest('.set-task-btn');
-    if (!btn) return;
-    const agent = btn.dataset.agent || '';
-    const content = decodeURIComponent(btn.dataset.content || '');
-    const base = content || agent;
-    const name = base.length > 14 ? base.slice(0, 14) + '…' : (base || '定时任务');
-    openTaskSheet({ name, agent, content });
-  });
   // 输入框 + 号 → 打开添加菜单
   let attachContext = 'home';
   const attachSheet = $('attachSheet');
@@ -2299,6 +2182,8 @@
     { name:'tolerance-checker', desc:'公差检测与验证工具，支持尺寸公差计算、配合分析和质量检测。' },
   ];
   let selectedSkills = [];
+  const historySkillMap = {};  // 历史会话技能快照
+  let currentHistoryId = null;  // 当前打开的会话ID
   const skillSheet = $('skillSheet');
   const skillSheetOverlay = $('skillSheetOverlay');
   function renderSkillList(query='') {
